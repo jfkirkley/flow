@@ -1,23 +1,16 @@
-package org.androware.flow;
+package org.androware.flowharness;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
-import org.androware.androbeans.JsonObjectReader;
-import org.androware.androbeans.JsonObjectWriter;
-import org.androware.androbeans.LinkObjectReadListener;
-import org.androware.androbeans.beans.Flow;
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
-import org.androware.androbeans.utils.Utils;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
+import org.androware.flow.JsonFlowEngine;
 
 public class MainActivity extends AppCompatActivity {
+
     public final static String TAG = "main";
 
     public void l(String s) {
@@ -32,28 +25,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ResourceUtils.R = R.class;
 
         FilterLog.inst().activateTag(TAG);
         JsonFlowEngine.inst(this).startFlow("test_flow");
-
-        if (false)
-            try {
-
-                JsonObjectReader jsonObjectReader = new JsonObjectReader(ResourceUtils.getResourceInputStream(this, "test_merge", "raw"), Flow.class);
-                jsonObjectReader.addObjectReadListener(new LinkObjectReadListener());
-                Flow flow = (Flow) jsonObjectReader.read();
-
-                l(flow.toStringTest());
-
-                FileOutputStream fos = Utils.getExternalFileOutputStream(this, null, "", "bout.txt");
-                JsonObjectWriter jsonObjectWriter = new JsonObjectWriter(fos);
-                jsonObjectWriter.write(flow);
-                jsonObjectWriter.close();
-
-            } catch (Exception e) {
-
-            }
 
     }
 

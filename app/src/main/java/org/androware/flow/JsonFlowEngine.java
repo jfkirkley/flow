@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.androware.androbeans.JsonObjectReader;
 import org.androware.androbeans.LinkObjectReadListener;
+import org.androware.androbeans.ObjectReadException;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.Utils;
 
@@ -56,8 +57,9 @@ public class JsonFlowEngine {
             JsonObjectReader jsonObjectReader = new JsonObjectReader(ResourceUtils.getResourceInputStream(activity, flowName, "raw"), Flow.class);
             jsonObjectReader.addObjectReadListener(new LinkObjectReadListener());
             this.currFlow = (Flow) jsonObjectReader.read();
+        } catch (ObjectReadException e) {
         } catch (IOException e) {
-            e.printStackTrace();
+            // TODO handle exeptions properly
         }
         //TestJSON.buildTest(getFlowFileInputStream("test_flow2"), Flow.class);
 
