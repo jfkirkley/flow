@@ -33,9 +33,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     repositories {
+        flatDir { dirs 'libs' }
         maven { url "https://jitpack.io" }
     }
-
+    //compile (name: 'androbeans-debug', ext:'aar')
     compile 'com.android.support:appcompat-v7:22.2.1'
 
     compile 'com.github.jfkirkley:androbeans:master-SNAPSHOT'

@@ -14,6 +14,7 @@ import java.util.Stack;
 
 import org.androware.androbeans.MapObjectReader;
 import org.androware.androbeans.ObjectReadException;
+import org.androware.androbeans.ObjectReaderFactory;
 import org.androware.androbeans.legacy.InstaBean;
 import org.androware.androbeans.legacy.JSONinstaBean;
 import org.androware.androbeans.utils.ConstructorSpec;
@@ -53,7 +54,7 @@ public class Step {
                 Map map = (Map)extras.getSerializable(prop);
                 // TODO, make this more generic please
                 try {
-                    ReflectionUtils.forceSetField(Step.class, prop, this, (new MapObjectReader(map, ConstructorSpec.class)).read());
+                    viewCustomizerSpec = (ConstructorSpec)ObjectReaderFactory.getInstance().makeAndRunInitializingMapReader(map, ConstructorSpec.class);
                 } catch (ObjectReadException e) {
                 }
             }
