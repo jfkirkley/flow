@@ -12,11 +12,8 @@ import java.util.Map;
 import java.util.Stack;
 
 
-import org.androware.androbeans.MapObjectReader;
 import org.androware.androbeans.ObjectReadException;
 import org.androware.androbeans.ObjectReaderFactory;
-import org.androware.androbeans.legacy.InstaBean;
-import org.androware.androbeans.legacy.JSONinstaBean;
 import org.androware.androbeans.utils.ConstructorSpec;
 import org.androware.androbeans.utils.ReflectionUtils;
 
@@ -210,9 +207,9 @@ public class Step {
             if (object instanceof Map) {
                 Map m = (Map) object;
                 for (Object k : m.keySet()) {
-                    if (!map.containsKey(k)) {
+                    //if (!map.containsKey(k)) {
                         map.put(k, m.get(k));
-                    }
+                    //}
                 }
             }
         }
