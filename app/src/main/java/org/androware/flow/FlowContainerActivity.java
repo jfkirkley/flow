@@ -204,7 +204,10 @@ public class FlowContainerActivity extends FragmentActivity {
     public Step popStep(FragmentTransaction fragmentTransaction, boolean doCommit) {
         if(stepStack.size()>1) {
             Step poppedStep = stepStack.pop();
+
             Step step = stepStack.peek();
+
+            poppedStep.popParamsToLastEndPoint();
 
             int containerId = ResourceUtils.getResId("id", step.parentContainer);
 

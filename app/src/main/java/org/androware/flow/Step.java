@@ -6,8 +6,9 @@ import android.util.Log;
 import android.view.View;
 
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -32,6 +33,8 @@ public class Step {
 
     public String targetFlow;
     public UI ui;
+
+    private int previousParamStackEndPoint = -1;
 
     private static final String[] overwritableProps = {"layout", "processor", "parentContainer", "transitionClassName", "targetFlow", "viewCustomizerSpec"};
 
@@ -188,6 +191,16 @@ public class Step {
         return getParam(key, 0);
     }
 
+    public List popParamsToLastEndPoint() {
+        List list = new ArrayList();
+        if(previousParamStackEndPoint >= 0) {
+            while(paramStack.size() > previousParamStackEndPoint) {
+                list.add(paramStack.pop());
+            }
+        }
+        return list;
+    }
+
     public void pushParams(Object params, Stack<Step> stepStack) {
         if (paramStack.size() > MAX_PARAMS) {
 
@@ -195,6 +208,7 @@ public class Step {
 
         } else {
 
+            previousParamStackEndPoint = paramStack.size();
             if (stepStack != null && stepStack.size() > 1) {
                 paramStack.addAll(stepStack.get(stepStack.size() - 1).getParamStack());
             }
@@ -207,9 +221,7 @@ public class Step {
             if (object instanceof Map) {
                 Map m = (Map) object;
                 for (Object k : m.keySet()) {
-                    //if (!map.containsKey(k)) {
-                        map.put(k, m.get(k));
-                    //}
+                    map.put(k, m.get(k));
                 }
             }
         }
