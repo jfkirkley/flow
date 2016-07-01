@@ -212,14 +212,13 @@ public class FlowContainerActivity extends FragmentActivity {
     public Step popStep(FragmentTransaction fragmentTransaction, boolean doCommit) {
         if(stepStack.size()>1) {
             Step poppedStep = stepStack.pop();
+            poppedStep.popParamsToLastEndPoint();
 
             // Note: activity steps don't load fragments, so the previous step is already loaded
             if(!stepsToActivity(poppedStep)) {
 
                 // reload the previous frag
                 Step step = stepStack.peek();
-
-                poppedStep.popParamsToLastEndPoint();
 
                 int containerId = ResourceUtils.getResId("id", step.parentContainer);
 
