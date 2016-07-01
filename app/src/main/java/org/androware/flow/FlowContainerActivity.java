@@ -146,7 +146,7 @@ public class FlowContainerActivity extends FragmentActivity {
         } else {
             Utils.startActivity(bundledData, activityClass, this);
         }
-
+        stepStack.push(step);
         // NOTE:  post transition happens in onCreate of the BaseFlowActivity class
     }
 
@@ -252,12 +252,7 @@ public class FlowContainerActivity extends FragmentActivity {
         super.onResume();
         if(justRestarted) {
             JsonFlowEngine.inst().setCurrFlow(flow);
-            if (stepStack.size() > 0) {
-                Step lastStep = stepStack.pop();
-                if (lastStep != null) {
-                    loadStepFragment(lastStep);
-                }
-            }
+            popStep();
             justRestarted = false;
         }
     }
