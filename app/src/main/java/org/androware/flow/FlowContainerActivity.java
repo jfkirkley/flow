@@ -15,6 +15,7 @@ import java.util.Stack;
 
 
 import org.androware.androbeans.utils.FilterLog;
+import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.Utils;
 
@@ -82,11 +83,7 @@ public class FlowContainerActivity extends FragmentActivity {
 
     public Class getProcessorType(Step step) {
         if( step.processor != null ) {
-            try {
-                return Class.forName(step.processor);
-            } catch (ClassNotFoundException e) {
-                return null;
-            }
+            return ReflectionUtils.getClass(step.processor);
         }
         return null;
     }
@@ -97,6 +94,14 @@ public class FlowContainerActivity extends FragmentActivity {
 
     public boolean isActivity(Class processorClass) {
         return Activity.class.isAssignableFrom(processorClass);
+    }
+
+    public boolean stepsToActivity(Step step) {
+        Class processorClass = getProcessorType(step);
+        if( processorClass != null) {
+            return isActivity(processorClass);
+        }
+        return false;
     }
 
     public boolean isFragment(Class processorClass) {
@@ -208,30 +213,35 @@ public class FlowContainerActivity extends FragmentActivity {
         if(stepStack.size()>1) {
             Step poppedStep = stepStack.pop();
 
-            Step step = stepStack.peek();
+            // Note: activity steps don't load fragments, so the previous step is already loaded
+            if(!stepsToActivity(poppedStep)) {
 
-            poppedStep.popParamsToLastEndPoint();
+                // reload the previous frag
+                Step step = stepStack.peek();
 
-            int containerId = ResourceUtils.getResId("id", step.parentContainer);
+                poppedStep.popParamsToLastEndPoint();
 
-            Step prevStep = poppedStep.parentContainer != null && poppedStep.parentContainer.equals(step.parentContainer) ?
-                    getPrevStepInSameContainer(step.parentContainer) : null;
+                int containerId = ResourceUtils.getResId("id", step.parentContainer);
 
-            StepFragment stepFragment = step.getStepFragment();
+                Step prevStep = poppedStep.parentContainer != null && poppedStep.parentContainer.equals(step.parentContainer) ?
+                        getPrevStepInSameContainer(step.parentContainer) : null;
 
-            step.preTransition(stepFragment);
-            // NOTE:  post transition happens in onCreateView of the StepFragment class
+                StepFragment stepFragment = step.getStepFragment();
 
-            if (prevStep == null) {
+                step.preTransition(stepFragment);
+                // NOTE:  post transition happens in onCreateView of the StepFragment class
 
-                fragmentTransaction.add(containerId, stepFragment, step.getName());
+                if (prevStep == null) {
 
-            } else {
-                prevStep.pause();
-                fragmentTransaction.replace(containerId, stepFragment);
-            }
-            if (doCommit) {
-                fragmentTransaction.commit();
+                    fragmentTransaction.add(containerId, stepFragment, step.getName());
+
+                } else {
+                    prevStep.pause();
+                    fragmentTransaction.replace(containerId, stepFragment);
+                }
+                if (doCommit) {
+                    fragmentTransaction.commit();
+                }
             }
             return poppedStep;
         }
