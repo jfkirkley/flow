@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.ViewGroup;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 
@@ -130,18 +131,20 @@ public class FlowContainerActivity extends FragmentActivity {
     public void loadActivity(Step step, Class activityClass) {
 
         //step.preTransition();
-        step.data.put("stepName", step.name);
+        HashMap bundledData = new HashMap();
+        bundledData.put("stepName", step.name);
+        bundledData.putAll(step.data);
 
         // TODO: need to provide place to pop off the last when activity is done
         activityClassStack.push(activityClass);
 
         // pass all params onto the new activity
-        step.addAllParams(step.data);
+        step.addAllParams(bundledData);
 
         if(FlowContainerActivity.class.isAssignableFrom(activityClass)) {
-            JsonFlowEngine.inst(this).startFlow(step.targetFlow, activityClass, step.data);
+            JsonFlowEngine.inst(this).startFlow(step.targetFlow, activityClass, bundledData);
         } else {
-            Utils.startActivity(step.data, activityClass, this);
+            Utils.startActivity(bundledData, activityClass, this);
         }
 
         // NOTE:  post transition happens in onCreate of the BaseFlowActivity class
