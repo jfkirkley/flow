@@ -214,7 +214,8 @@ public class FlowContainerActivity extends FragmentActivity {
 
             int containerId = ResourceUtils.getResId("id", step.parentContainer);
 
-            Step prevStep = poppedStep.parentContainer.equals(step.parentContainer) ? getPrevStepInSameContainer(step.parentContainer) : null;
+            Step prevStep = poppedStep.parentContainer != null && poppedStep.parentContainer.equals(step.parentContainer) ?
+                    getPrevStepInSameContainer(step.parentContainer) : null;
 
             StepFragment stepFragment = step.getStepFragment();
 
