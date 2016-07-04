@@ -16,6 +16,7 @@ node_modules
 Android
 platforms
 tns_modules
+app/build
 App_Resources
 *.o
 *.so

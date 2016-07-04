@@ -3,6 +3,7 @@ package org.androware.flow;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 import android.view.ViewGroup;
 
 
@@ -19,7 +20,7 @@ import org.androware.androbeans.utils.Utils;
  * A FlowContainerActivity can start a BaseFlowActivity and manage
  * it like a StepFragment,   giving it some degree of control over the Activity.
  */
-public class BaseFlowActivity extends FragmentActivity {
+public class BaseFlowActivity extends FragmentActivity implements TransitionActor {
 
     Step step;
 
@@ -42,13 +43,11 @@ public class BaseFlowActivity extends FragmentActivity {
         step.preTransition(this);
         doPreInit(step);
 
-        ViewGroup rootView = (ViewGroup) ((ViewGroup) this
-            .findViewById(android.R.id.content)).getChildAt(0);
+        ViewGroup rootView = (ViewGroup) getRootView();
 
         GUI_utils.buildUI(this, step, rootView);
 
         step.setNavHandlers(rootView);
-
 
     }
 
@@ -64,4 +63,13 @@ public class BaseFlowActivity extends FragmentActivity {
         super.onResume();
     }
 
+    @Override
+    public boolean isFragment() {
+        return false;
+    }
+
+    @Override
+    public View getRootView() {
+        return  ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+    }
 }

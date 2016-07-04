@@ -15,6 +15,16 @@ public class Flow  {
     public String layout;
     public String processor;
 
+    private HashMap<String, Object> boundObjects =new HashMap<>();
+
+    public void setBoundObject(String name, Object object) {
+        boundObjects.put(name, object);
+    }
+
+    public Object getBoundObject(String name) {
+        return boundObjects.get(name);
+    }
+
     public ConstructorSpec stepGeneratorSpec;
 
     public StepGenerator stepGenerator;
@@ -78,6 +88,7 @@ public class Flow  {
     public void __init__() {
         for(String k: steps.keySet()) {
             Step step = steps.get(k);
+            step.setFlow(this);
             step.setStepTransition(StepTransitionFactory.getInstance().makeStepTransition(step));
         }
 

@@ -2,13 +2,14 @@ package org.androware.flow;
 
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.Utils;
 
@@ -16,16 +17,11 @@ import org.androware.androbeans.utils.Utils;
  * Created by jkirkley on 5/8/16.
  */
 
-public class StepFragment extends Fragment {
+public class StepFragment extends Fragment implements TransitionActor {
     public Step getStep() {
         return step;
     }
 
-    @Nullable
-    @Override
-    public View getView() {
-        return view;
-    }
 
     @Override
     public void onResume() {
@@ -33,16 +29,20 @@ public class StepFragment extends Fragment {
         ((FlowContainerActivity)getActivity()).fragmentStepVisible(step);
     }
 
-    View view;
 
     public Step step;
     /**
      * Create a new instance of StepFragment, initialized to the given step name
      */
-    public static StepFragment newInstance(String stepName) {
+    public static StepFragment newInstance(Step step) {
 
+        String stepName = step.getName();
         Log.d("bob", "stepanem: " + stepName);
-        StepFragment f = new StepFragment();
+        Log.d("bob", "stepanem: " + step.processor);
+
+
+        //StepFragment f = new StepFragment();
+        StepFragment f = (StepFragment) ReflectionUtils.newInstance(step.processor);
 
         // Supply index input as an argument.
         Bundle args = new Bundle();
@@ -62,8 +62,15 @@ public class StepFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        view = Utils.inflateView(step.layout, inflater, container);
+        View view = Utils.inflateView(step.layout, inflater, container);
 
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        View view = getView();
         GUI_utils.buildUI(getActivity(), step, view);
 
         step.setNavHandlers(view, (FlowContainerActivity) getActivity());
@@ -73,24 +80,20 @@ public class StepFragment extends Fragment {
         // pretransition happens in FlowContainerActivity loadStepFragment
         step.postTransition(this);
 
-        return view;
     }
 
     public View getSubView(String idStr){
         return getView().findViewById(ResourceUtils.getResId("id", idStr));
     }
 
-/*
+
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            ((FlowContainerActivity)getActivity()).fragmentStepVisible(step);
-        }
-        else {
-        }
+    public boolean isFragment() {
+        return true;
     }
 
-*/
-
+    @Override
+    public View getRootView() {
+        return getView();
+    }
 }

@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import org.androware.androbeans.JsonObjectReader;
 import org.androware.androbeans.JsonObjectWriter;
 import org.androware.androbeans.LinkObjectReadListener;
+import org.androware.androbeans.ObjectReaderFactory;
 import org.androware.androbeans.beans.Flow;
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
@@ -35,7 +36,21 @@ public class MainActivity extends AppCompatActivity {
         ResourceUtils.R = R.class;
 
         FilterLog.inst().activateTag(TAG);
-        JsonFlowEngine.inst(this).startFlow("test_flow");
+        //JsonFlowEngine.inst(this).startFlow("bind_test_flow");
+
+        ObjectReaderFactory.getInstance(this);   // intialize activity for read factory
+
+        ResourceUtils.R = org.androware.flow.R.class;
+
+        FilterLog.inst().activateTag(TAG);
+        FilterLog.inst().activateTag(Constants.TAG);
+
+        l("next id:" + ResourceUtils.getResId("id", "next"));
+
+        //JsonFlowEngine.inst(this).startFlow("model_test");
+        JsonFlowEngine.inst(this).startFlow("bind_test_flow");
+
+        //JsonFlowEngine.inst(this).startFlow("model_test");
 
         if (false)
             try {

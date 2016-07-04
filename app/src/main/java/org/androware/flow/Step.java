@@ -26,10 +26,13 @@ public class Step {
 
     public static final int MAX_PARAMS = 1024;
 
+    private Flow flow;
     public String layout;
     public String processor;
     public String parentContainer;
     public String transitionClassName;
+
+    public ObjectLoaderSpec objectLoaderSpec;
 
     public String targetFlow;
     public UI ui;
@@ -97,7 +100,7 @@ public class Step {
 
 
     public StepFragment buildStepFragment() {
-        stepFragment = StepFragment.newInstance(name);
+        stepFragment = StepFragment.newInstance(this);
         return stepFragment;
     }
 
@@ -146,17 +149,19 @@ public class Step {
 
     public void setNavHandlers(View view, FlowContainerActivity activity) {
 
-        for (String targetKey : navMap.keySet()) {
-            Nav nav = navMap.get(targetKey);
-            nav.setNavHandler(view, activity, targetKey);
+        if(navMap != null) {
+            for (String targetKey : navMap.keySet()) {
+                Nav nav = navMap.get(targetKey);
+                nav.setNavHandler(view, activity, targetKey);
+            }
         }
     }
 
-    public void preTransition(Object actor) {
+    public void preTransition(TransitionActor actor) {
         stepTransition.preTransition(this, actor);
     }
 
-    public void postTransition(Object actor) {
+    public void postTransition(TransitionActor actor) {
         stepTransition.postTransition(this, actor);
     }
 
@@ -243,6 +248,15 @@ public class Step {
     public void setCurrNav(Nav currNav) {
         this.currNav = currNav;
     }
+
+    public Flow getFlow() {
+        return flow;
+    }
+
+    public void setFlow(Flow flow) {
+        this.flow = flow;
+    }
+
 
 }
 

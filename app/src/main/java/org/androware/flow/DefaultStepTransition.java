@@ -11,13 +11,13 @@ public class DefaultStepTransition implements StepTransition {
     }
 
     @Override
-    public void preTransition(Step step, Object actor) {
+    public void preTransition(Step step, TransitionActor actor) {
         l("Def: pre" );
         l(step.toString());
     }
 
     @Override
-    public void postTransition(Step step, Object actor) {
+    public void postTransition(Step step, TransitionActor actor) {
         l("Def: post" );
         l(step.toString());
     }

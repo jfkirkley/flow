@@ -2,8 +2,9 @@ package org.androware.flow;
 
 
 import android.app.Activity;
-import android.app.Fragment;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
@@ -105,7 +106,9 @@ public class FlowContainerActivity extends FragmentActivity {
     }
 
     public boolean isFragment(Class processorClass) {
-        return Fragment.class.isAssignableFrom(processorClass);
+        boolean value = Fragment.class.isAssignableFrom(processorClass);
+        l("isfrag:" + value);
+        return value;
     }
 
     public void loadStep(Nav nav) {
