@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.androware.androbeans.ObjectReaderFactory;
+import org.androware.androbeans.ObjectWriterFactory;
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.Constants;
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         FilterLog.inst().activateTag(TAG);
         FilterLog.inst().activateTag(Constants.TAG);
         ObjectReaderFactory.getInstance(this);   // intialize activity for read factory
+        ObjectWriterFactory.getInstance(this);   // intialize activity for write factory
+
+
         l("id: " + ResourceUtils.getResId("id", "next"));
         //JsonFlowEngine.inst(this).startFlow("model_test");
         JsonFlowEngine.inst(this).startFlow("bind_test_flow");

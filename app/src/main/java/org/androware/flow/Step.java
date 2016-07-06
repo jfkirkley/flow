@@ -28,11 +28,12 @@ public class Step {
 
     private Flow flow;
     public String layout;
-    public String processor;
+    public String processor = StepFragment.class.getName();
     public String parentContainer;
     public String transitionClassName;
 
     public ObjectLoaderSpec objectLoaderSpec;
+    public ObjectSaverSpec objectSaverSpec;
 
     public String targetFlow;
     public UI ui;

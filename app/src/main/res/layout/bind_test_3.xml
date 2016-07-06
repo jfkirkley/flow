@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
    <data>
-       <import type="android.databinding.ObservableMap"/>
-       <variable name="testWrapper" type="org.androware.flow.ObjectBindingObeservableArrayMap"/>
-       <!-- variable name="testWrapper" type="ObservableMap"/ -->
+       <variable name="testWrapper" type="org.androware.flow.test_objs.TestWrapper"/>
    </data>
    <LinearLayout
        android:orientation="vertical"
@@ -12,12 +10,12 @@
        <!---->
               <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text='@{(String)testWrapper.get("v4")}'
+                  android:text='@={(String)testWrapper.v4}'
                   android:textSize="36sp" />
 
               <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text='@{(String)testWrapper.get("v5")}'
+                  android:text='@={(String)testWrapper.v5}'
                   android:textSize="36sp" />
        <!--    -->
 
@@ -27,6 +25,12 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:id="@+id/prev" />
+
+       <Button
+           android:text="Save"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:id="@+id/save" />
 
    </LinearLayout>
 </layout>

@@ -23,6 +23,12 @@ public class JsonObjectLoader implements ObjectLoader {
     public Object load(ObjectLoaderSpec spec, Step step) {
         String objectClassName = (String) spec.properties.get(OBJECT_CLASSNAME);
 
+        if(true) {
+            Object o = ReflectionUtils.newInstance(objectClassName);
+            step.getFlow().setBoundObject(objectClassName, o);
+            return o;
+        }
+
         if (objectClassName != null) {
 
             Object object = null;

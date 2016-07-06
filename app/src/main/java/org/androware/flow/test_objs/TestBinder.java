@@ -13,8 +13,6 @@ import org.androware.flow.DataObjectBinder;
 
 import org.androware.flow.ObjectBindingObeservableArrayMap;
 import org.androware.flow.Step;
-import org.androware.flow.databinding.BindTest2Binding;
-import org.androware.flow.databinding.BindTest3Binding;
 
 
 /**
@@ -25,7 +23,7 @@ public class TestBinder implements DataObjectBinder {
     @Override
     public View bind(LayoutInflater layoutInflater, ViewGroup container, Step step) {
         TestWrapper testBindObject = new TestWrapper();
-
+/*
         if(step.layout.equals("bind_test_1")) {
             ViewDataBinding binding = DataBindingUtil.inflate(layoutInflater, ResourceUtils.getLayoutId(step.layout), container, false);
             if(ReflectionUtils.hasMethod(binding.getClass(), "setTestWrapper", ObjectBindingObeservableArrayMap.class)) {
@@ -33,11 +31,11 @@ public class TestBinder implements DataObjectBinder {
                 return binding.getRoot();
             }
 
-/*
+
             BindTest1Binding binding = DataBindingUtil.inflate(layoutInflater, ResourceUtils.getLayoutId(step.layout), container, false);
             binding.setTestWrapper(new ObjectBindingObeservableArrayMap(testBindObject));
             return binding.getRoot();
-            */
+
         }
 
         else if(step.layout.equals("bind_test_2")) {
@@ -57,7 +55,8 @@ public class TestBinder implements DataObjectBinder {
             return binding.getRoot();
 
         }
-                /*
+            */
+         /*
 */
         return null;
     }

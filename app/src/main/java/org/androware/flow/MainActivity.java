@@ -10,6 +10,7 @@ import org.androware.androbeans.JsonObjectReader;
 import org.androware.androbeans.JsonObjectWriter;
 import org.androware.androbeans.LinkObjectReadListener;
 import org.androware.androbeans.ObjectReaderFactory;
+import org.androware.androbeans.ObjectWriterFactory;
 import org.androware.androbeans.beans.Flow;
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         //JsonFlowEngine.inst(this).startFlow("bind_test_flow");
 
         ObjectReaderFactory.getInstance(this);   // intialize activity for read factory
+        ObjectWriterFactory.getInstance(this);   // intialize activity for read factory
 
         ResourceUtils.R = org.androware.flow.R.class;
 

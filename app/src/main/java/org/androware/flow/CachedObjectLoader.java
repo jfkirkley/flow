@@ -18,6 +18,8 @@ import static org.androware.flow.JsonObjectLoader.RAW_RESOURCE_NAME;
 
 public class CachedObjectLoader implements ObjectLoader {
 
+    public static final String CACHED_OBJECT_NAME = "cachedObjectName";
+
     public CachedObjectLoader() {}
 
     @Override

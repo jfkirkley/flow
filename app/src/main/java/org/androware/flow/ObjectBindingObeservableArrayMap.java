@@ -2,6 +2,8 @@ package org.androware.flow;
 
 import android.databinding.ObservableArrayMap;
 
+import org.androware.androbeans.utils.ReflectionUtils;
+
 import java.lang.reflect.Field;
 
 /**
@@ -10,8 +12,11 @@ import java.lang.reflect.Field;
 
 public class ObjectBindingObeservableArrayMap extends ObservableArrayMap {
 
+    Object target;
+
     public ObjectBindingObeservableArrayMap(Object t) {
         super();
+        target = t;
         Field fields [] = t.getClass().getFields();
 
         for(Field field: fields){
@@ -20,5 +25,11 @@ public class ObjectBindingObeservableArrayMap extends ObservableArrayMap {
             } catch (IllegalAccessException e) {
             }
         }
+    }
+
+    @Override
+    public Object put(Object o, Object o2) {
+        ReflectionUtils.setField(target.getClass(), (String)o, target, o2);
+        return super.put(o, o2);
     }
 }

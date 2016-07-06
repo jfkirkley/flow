@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.DataObjectBinder;
-import org.androware.flow.ObervableArrayMapFactory;
+
 import org.androware.flow.Step;
-import org.androware.flow.databinding.BindTest1Binding;
+
 import org.androware.flow.databinding.ModelTestBinding;
 
 /**

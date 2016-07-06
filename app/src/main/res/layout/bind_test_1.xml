@@ -2,8 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
    <data>
-       <import type="android.databinding.ObservableMap"/>
-       <variable name="testWrapper" type="org.androware.flow.ObjectBindingObeservableArrayMap"/>
+       <variable name="testWrapper" type="org.androware.flow.test_objs.TestWrapper"/>
    </data>
 
    <LinearLayout
@@ -13,13 +12,13 @@
        <!-- -->
               <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text='@{(String)testWrapper.get("v1")}'
+                  android:text='@={(String)testWrapper.v1}'
                   android:textSize="36sp"
                   />
 
               <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text='@{(String)testWrapper.get("v2")}'
+                  android:text='@={(String)testWrapper.v2}'
                   android:textSize="36sp"
                   />
        <!-- -->
