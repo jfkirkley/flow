@@ -3,6 +3,8 @@ package org.androware.flow;
 import android.util.Log;
 import java.util.HashMap;
 import org.androware.androbeans.utils.ConstructorSpec;
+import org.androware.flow.binding.BeanBinder;
+import org.androware.flow.binding.BindEngine;
 
 
 /**
@@ -15,10 +17,16 @@ public class Flow  {
     public String layout;
     public String processor;
 
+    BindEngine bindEngine = new BindEngine();
+
     private HashMap<String, Object> boundObjects =new HashMap<>();
 
     public void setBoundObject(String name, Object object) {
         boundObjects.put(name, object);
+
+        if( object instanceof BeanBinder){
+            bindEngine.addBeanBinder(name, (BeanBinder)object);
+        }
     }
 
     public Object getBoundObject(String name) {
@@ -90,6 +98,9 @@ public class Flow  {
             Step step = steps.get(k);
             step.setFlow(this);
             step.setStepTransition(StepTransitionFactory.getInstance().makeStepTransition(step));
+            if( step.twoWayMapper != null) {
+                bindEngine.addTwoWayMapper(step.twoWayMapper);
+            }
         }
 
         if (stepGeneratorSpec != null) {
@@ -99,5 +110,10 @@ public class Flow  {
             stepGenerator = (StepGenerator) stepGeneratorSpec.build();
         }
     }
+
+    public BindEngine getBindEngine() {
+        return bindEngine;
+    }
+
 
 }

@@ -12,6 +12,9 @@ public class ObjectLoaderSpec {
 
 
     public String objectLoaderClassName;
+    public String objectClassName;
+    public String objectId;
+
     public HashMap<String, Object> properties;
 
     public ObjectLoader buildLoader() {

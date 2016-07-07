@@ -17,6 +17,7 @@ import org.androware.androbeans.ObjectReadException;
 import org.androware.androbeans.ObjectReaderFactory;
 import org.androware.androbeans.utils.ConstructorSpec;
 import org.androware.androbeans.utils.ReflectionUtils;
+import org.androware.flow.binding.TwoWayMapper;
 
 
 /**
@@ -32,6 +33,7 @@ public class Step {
     public String parentContainer;
     public String transitionClassName;
 
+    public TwoWayMapper twoWayMapper;
     public ObjectLoaderSpec objectLoaderSpec;
     public ObjectSaverSpec objectSaverSpec;
 
@@ -132,6 +134,9 @@ public class Step {
     public void __init__() {
         if (viewCustomizerSpec != null) {
             viewCustomizer = (ViewCustomizer) viewCustomizerSpec.build();
+        }
+        if(twoWayMapper != null){
+            twoWayMapper.setStep(this);
         }
     }
 

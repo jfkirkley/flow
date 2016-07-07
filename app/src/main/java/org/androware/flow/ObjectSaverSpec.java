@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class ObjectSaverSpec {
 
     public String objectSaverClassName;
+    public String objectId;
     public HashMap<String, Object> properties;
 
     public ObjectSaver buildSaver() {

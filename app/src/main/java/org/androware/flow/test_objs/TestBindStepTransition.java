@@ -4,6 +4,9 @@ package org.androware.flow.test_objs;
 import org.androware.flow.Step;
 import org.androware.flow.StepTransition;
 import org.androware.flow.TransitionActor;
+import org.androware.flow.binding.BeanBinder;
+
+import static org.androware.flow.BR.testWrapper;
 
 
 /**
@@ -29,17 +32,17 @@ public class TestBindStepTransition implements StepTransition {
 
     @Override
     public void postTransition(Step step, TransitionActor actor) {
-        String objName = TestWrapper.class.getName();
-        Object target = step.getFlow().getBoundObject(objName);
 
-        TestWrapper testWrapper = (TestWrapper) target;
+        Object target = step.getFlow().getBoundObject(step.objectLoaderSpec.objectId);
 
-        testWrapper.v1.set( testValues[nextIndex()]);
-        testWrapper.v2.set( testValues[nextIndex()]);
-        testWrapper.v3.set( testValues[nextIndex()]);
-        testWrapper.v4.set( testValues[nextIndex()]);
-        testWrapper.v5.set( testValues[nextIndex()]);
-
+        BeanBinder testWrapper = (BeanBinder) target;
+        if(testWrapper != null) {
+            testWrapper.set("v1", testValues[nextIndex()]);
+            testWrapper.set("v2", testValues[nextIndex()]);
+            testWrapper.set("v3", testValues[nextIndex()]);
+            testWrapper.set("v4", testValues[nextIndex()]);
+            testWrapper.set("v5", testValues[nextIndex()]);
+        }
     }
 
     @Override

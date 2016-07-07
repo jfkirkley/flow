@@ -8,10 +8,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CalendarView;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
 import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.Utils;
+
+import java.util.Calendar;
 
 /**
  * Created by jkirkley on 5/8/16.
@@ -26,6 +34,10 @@ public class StepFragment extends Fragment implements TransitionActor {
     @Override
     public void onResume() {
         super.onResume();
+
+        // pretransition happens in FlowContainerActivity loadStepFragment
+        step.postTransition(this);
+
         ((FlowContainerActivity)getActivity()).fragmentStepVisible(step);
     }
 
@@ -70,17 +82,17 @@ public class StepFragment extends Fragment implements TransitionActor {
     @Override
     public void onStart() {
         super.onStart();
+
         View view = getView();
+
         GUI_utils.buildUI(getActivity(), step, view);
 
         step.setNavHandlers(view, (FlowContainerActivity) getActivity());
 
         step.customizeView(getActivity(), view);
-
-        // pretransition happens in FlowContainerActivity loadStepFragment
-        step.postTransition(this);
-
     }
+
+
 
     public View getSubView(String idStr){
         return getView().findViewById(ResourceUtils.getResId("id", idStr));

@@ -1,5 +1,7 @@
 package org.androware.flow;
 
+import org.androware.flow.binding.BeanBinder;
+
 import static org.androware.flow.CachedObjectLoader.CACHED_OBJECT_NAME;
 
 /**
@@ -9,11 +11,8 @@ import static org.androware.flow.CachedObjectLoader.CACHED_OBJECT_NAME;
 public class ObjectSaverStepTransition implements StepTransition {
     @Override
     public void preTransition(Step step, TransitionActor actor) {
-        if (step.objectSaverSpec.properties.containsKey(CACHED_OBJECT_NAME)) {
-            String objName = (String)step.objectSaverSpec.properties.get(CACHED_OBJECT_NAME);
-            Object target = step.getFlow().getBoundObject(objName);
-            step.objectSaverSpec.buildAndSave(target);
-        }
+        BeanBinder beanBinder = (BeanBinder)step.getFlow().getBoundObject(step.objectSaverSpec.objectId);
+        step.objectSaverSpec.buildAndSave(beanBinder.getBean());
     }
 
     @Override

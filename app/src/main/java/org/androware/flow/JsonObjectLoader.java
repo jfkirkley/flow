@@ -4,6 +4,7 @@ import org.androware.androbeans.ObjectReadException;
 import org.androware.androbeans.ObjectReaderFactory;
 import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.Utils;
+import org.androware.flow.binding.BeanBinder;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,13 +22,7 @@ public class JsonObjectLoader implements ObjectLoader {
 
     @Override
     public Object load(ObjectLoaderSpec spec, Step step) {
-        String objectClassName = (String) spec.properties.get(OBJECT_CLASSNAME);
-
-        if(true) {
-            Object o = ReflectionUtils.newInstance(objectClassName);
-            step.getFlow().setBoundObject(objectClassName, o);
-            return o;
-        }
+        String objectClassName = spec.objectClassName;
 
         if (objectClassName != null) {
 
@@ -63,9 +58,10 @@ public class JsonObjectLoader implements ObjectLoader {
                 }
             }
 
-            step.getFlow().setBoundObject(objectClass.getName(), object);
+            BeanBinder beanBinder = new BeanBinder(object, spec.objectId, step);
+            step.getFlow().setBoundObject(spec.objectId, beanBinder);
 
-            return object;
+            return beanBinder;
         }
 
         return null;

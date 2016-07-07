@@ -24,13 +24,6 @@ public class CachedObjectLoader implements ObjectLoader {
 
     @Override
     public Object load(ObjectLoaderSpec spec, Step step) {
-        String objectClassName = (String) spec.properties.get(OBJECT_CLASSNAME);
-
-        if (objectClassName != null) {
-            return step.getFlow().getBoundObject(objectClassName);
-        }
-
-        return null;
-
+        return step.getFlow().getBoundObject(spec.objectId);
     }
 }

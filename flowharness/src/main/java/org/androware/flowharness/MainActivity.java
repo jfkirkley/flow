@@ -11,7 +11,7 @@ import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.Constants;
 import org.androware.flow.JsonFlowEngine;
-
+import org.androware.flow.binding.BindEngine;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
         FilterLog.inst().activateTag(TAG);
         FilterLog.inst().activateTag(Constants.TAG);
+        FilterLog.inst().activateTag(BindEngine.TAG);
+
         ObjectReaderFactory.getInstance(this);   // intialize activity for read factory
         ObjectWriterFactory.getInstance(this);   // intialize activity for write factory
 

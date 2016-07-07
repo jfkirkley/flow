@@ -1,6 +1,6 @@
 package org.androware.flow.test_objs;
 
-import android.databinding.ObservableField;
+
 
 /**
  * Created by jkirkley on 7/3/16.
@@ -8,10 +8,10 @@ import android.databinding.ObservableField;
 
 public class TestWrapper {
 
-    public ObservableField<String> v1 = new ObservableField<>("abc");
-    public ObservableField<String> v2 = new ObservableField<>("123");
-    public ObservableField<String> v3 = new ObservableField<>("def");
-    public ObservableField<String> v4 = new ObservableField<>("456");
-    public ObservableField<String> v5 = new ObservableField<>("hij");
+    public String v1 = "abc";
+    public String v2 = "123";
+    public String v3 = "def";
+    public String v4 = "456";
+    public String v5 = "hij";
 
 }
