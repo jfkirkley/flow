@@ -2,8 +2,6 @@ package org.androware.flow;
 
 
 
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,19 +12,13 @@ import android.widget.DatePicker;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.EventCatcher;
-import org.androware.flow.binding.Pivot;
 import org.androware.flow.binding.TwoWayMapper;
 
-
 import java.util.Calendar;
-import java.util.Map;
 
-import static android.R.attr.value;
-import static org.androware.flow.JsonObjectLoader.OBJECT_CLASSNAME;
 
 /**
  * Created by jkirkley on 7/2/16.

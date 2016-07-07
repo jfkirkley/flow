@@ -6,8 +6,6 @@ import org.androware.flow.StepTransition;
 import org.androware.flow.TransitionActor;
 import org.androware.flow.binding.BeanBinder;
 
-import static org.androware.flow.BR.testWrapper;
-
 
 /**
  * Created by jkirkley on 7/5/16.
