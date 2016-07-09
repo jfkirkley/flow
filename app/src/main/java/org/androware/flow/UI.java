@@ -8,7 +8,9 @@ import java.util.HashMap;
  */
 public class UI  {
 
-    public HashMap<String, ListSpec> lists;
+    //public HashMap<String, ListSpec> lists;
+
+    public HashMap<String, AdapterViewSpec> adapterViews;
     public HashMap<String, PagerSpec> pagers;
 
     public UI() {

@@ -4,18 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!---->
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/s2t1"
         android:textSize="36sp" />
 
+    <Spinner
+        android:id="@+id/planets_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <!--
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/s2t2"
         android:textSize="36sp" />
-    <!---->
+    -->
+
     <Button
         android:id="@+id/next"
         android:layout_width="match_parent"

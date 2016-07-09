@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by jkirkley on 5/7/16.
  */
-public class ListSpec extends ViewSpec {
+public class ListSpec extends AdapterViewSpec {
 
 
     public String adapterClass;

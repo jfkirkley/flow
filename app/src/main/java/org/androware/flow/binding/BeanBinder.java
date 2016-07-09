@@ -2,10 +2,9 @@ package org.androware.flow.binding;
 
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ReflectionUtils;
-import org.androware.flow.Constants;
+
 import org.androware.flow.Step;
 
-import static android.R.attr.name;
 
 /**
  * Created by jkirkley on 7/6/16.

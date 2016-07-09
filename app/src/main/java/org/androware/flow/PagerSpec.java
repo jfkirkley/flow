@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by jkirkley on 5/19/16.
  */
-public class PagerSpec extends ViewSpec {
+public class PagerSpec extends AdapterViewSpec {
 
     public String adapterClass;
 

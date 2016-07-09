@@ -3,7 +3,7 @@ package org.androware.flow.binding;
 /**
  * Created by jkirkley on 7/6/16.
  */
-public class Pivot {
+ public class Pivot {
 
     public String beanId;
     public String beanField;

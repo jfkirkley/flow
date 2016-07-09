@@ -72,9 +72,14 @@ public class StepFragment extends Fragment implements TransitionActor {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         View view = Utils.inflateView(step.layout, inflater, container);
+
+        GUI_utils.buildUI(getActivity(), step, view);
+
+        step.setNavHandlers(view, (FlowContainerActivity) getActivity());
+
+        step.customizeView(getActivity(), view);
 
         return view;
     }
@@ -85,11 +90,6 @@ public class StepFragment extends Fragment implements TransitionActor {
 
         View view = getView();
 
-        GUI_utils.buildUI(getActivity(), step, view);
-
-        step.setNavHandlers(view, (FlowContainerActivity) getActivity());
-
-        step.customizeView(getActivity(), view);
     }
 
 

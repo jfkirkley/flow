@@ -1,29 +1,33 @@
 package org.androware.flow;
 
 
+import org.androware.androbeans.utils.ConstructorSpec;
+
 import java.util.List;
 
 
 /**
  * Created by jkirkley on 5/7/16.
  */
-public class ViewSpec  {
+public class AdapterViewSpec {
 
     public String viewId;
     public String itemLayoutId;
     public boolean useDefault;
 
-    public List<ItemSpec> items;
+    public ConstructorSpec adapterConstructorSpec;
 
-    public ViewSpec() {
+    public List<Object> items;
+
+    public AdapterViewSpec() {
     }
 
 
-    public ItemSpec getDefaultItemSpec(){
+    public Object getDefaultItemSpec(){
         return getItemSpec(0);
     }
 
-    public ItemSpec getItemSpec(int position){
+    public Object getItemSpec(int position){
         if(useDefault) {
             return items.get(0);
         }

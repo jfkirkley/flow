@@ -37,10 +37,36 @@
         "s2":        
         {
             "layout": "mybind_test_2",
+
+            "ui": {
+                "adapterViews": {
+                    "planets_spinner": {
+                        "viewId": "planets_spinner",
+                        "itemLayoutId":  "simple_spinner_item",
+                        "adapterConstructorSpec": {
+                            "targetClassName": "android.widget.ArrayAdapter",
+                            "paramClassNames": [  "android.content.Context", "int", "java.util.List"],
+                            "paramObjects": ["__plugin__context", "android.R.layout.simple_spinner_item", "__plugin__items" ]
+                        },
+                        "items": [
+                            "Mercury",
+                            "Venus",
+                            "Earth",
+                            "Mars",
+                            "Jupiter",
+                            "Saturn",
+                            "Uranus",
+                            "Neptune",
+                            "Pluto"
+                        ]
+                    }
+                }
+                
+            },
             "twoWayMapper": {
                 "componentId2BeanFieldMap": {
                     "s2t1": "b1.v2",
-                    "s2t2": "b1.v3"
+                    "planets_spinner": "b1.v3"
                 }
             },
             "objectLoaderSpec": {
@@ -70,13 +96,14 @@
                     "s3t2": "b1.v5"
                 }
             },
+
             "objectLoaderSpec": {
                 "objectLoaderClassName": "org.androware.flow.CachedObjectLoader",
                 "objectId": "b1"
             },
+
             "parentContainer": "fragmentContainer",
             "processor": "org.androware.flow.BoundStepFragment",
-            "transitionClassName": "org.androware.flow.test_objs.TestBindStepTransition",
 
             "navMap": {
                 "s2": {

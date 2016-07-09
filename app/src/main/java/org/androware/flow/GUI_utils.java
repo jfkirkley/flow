@@ -7,6 +7,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -14,13 +16,31 @@ import org.androware.androbeans.utils.ResourceUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
 import java.util.List;
+
 
 
 /**
  * Created by jkirkley on 5/10/16.
  */
 public class GUI_utils {
+
+    public static int getAdapterItemPosition(Adapter adapter, Object item){
+        for( int i = 0; i < adapter.getCount(); ++i) {
+            if(adapter.getItem(i).equals( item ) ) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static void setAdapterViewSelectedItem(AdapterView adapterView, Object item){
+        int i = getAdapterItemPosition(adapterView.getAdapter(), item);
+        if( i != -1 ) {
+            adapterView.setSelection(i);
+        }
+    }
 
     public static ViewPager buildPager(Activity activity, PagerSpec pagerSpec, View view) {
         ViewPager viewPager = (ViewPager) view.findViewById(ResourceUtils.getResId("id", pagerSpec.viewId));
@@ -48,34 +68,21 @@ public class GUI_utils {
     }
 
 
-    public static ListView buildFlowList(Activity activity, ListSpec listSpec, View view) {
+    public static AdapterView buildAdapterView(Activity activity, AdapterViewSpec adapterViewSpec, View view) {
 
-        final ListView listView = (ListView) view.findViewById(ResourceUtils.getResId("id", listSpec.viewId));
+        final AdapterView adapterView = (AdapterView) view.findViewById(ResourceUtils.getResId("id", adapterViewSpec.viewId));
 
-        int listItemLayoutId = ResourceUtils.getResId("layout", listSpec.itemLayoutId);
+        if ( adapterViewSpec.adapterConstructorSpec != null ) {  // ESGAAAAAAAxdz
 
-        if (listSpec.adapterClass != null) {
-            try {
-                Class adapterClass = Class.forName(listSpec.adapterClass);
-                Constructor c = adapterClass.getConstructor(Activity.class, int.class, List.class);
-                ListAdapter listAdapter = (ListAdapter) c.newInstance(activity, listItemLayoutId, listSpec.items);
+            adapterViewSpec.adapterConstructorSpec.plugInValue(activity, "context");
+            adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec.items, "items");
 
-                listView.setAdapter(listAdapter);
+            Adapter adapter = (Adapter)adapterViewSpec.adapterConstructorSpec.build();
 
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            adapterView.setAdapter(adapter);
         }
 
-        return listView;
+        return adapterView;
 
     }
 
@@ -84,12 +91,14 @@ public class GUI_utils {
         UI ui = step.ui;
 
         if( ui != null ) {
-            if (ui.lists != null) {
-                for (String k : ui.lists.keySet()) {
-                    ListSpec listSpec = ui.lists.get(k);
-                    buildFlowList(activity, listSpec, view);
+            if (ui.adapterViews != null) {
+                for (String k : ui.adapterViews.keySet()) {
+                    AdapterViewSpec adapterViewSpec = ui.adapterViews.get(k);
+                    buildAdapterView(activity, adapterViewSpec, view);
                     Nav nav = step.navMap.get(k);
-                    nav.setItems(listSpec.items);
+                    if(nav != null){
+                        nav.setItems(adapterViewSpec.items);
+                    }
                 }
             }
             if (ui.pagers != null) {
