@@ -14,6 +14,7 @@ import org.androware.androbeans.utils.Utils;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -140,10 +141,10 @@ public class Nav  {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view,
                                                 int position, long id) {
-                            ListItemSpec listItemSpec = (ListItemSpec) items.get(position);
+                            Map itemSpecMap = (Map) items.get(position);
                             //l("target: " + listItemSpec.target);
-                            thisNav.target = listItemSpec.target;
-                            activity.loadStep(thisNav, listItemSpec.props);
+                            thisNav.target = (String)itemSpecMap.get("target");
+                            activity.loadStep(thisNav, (String)itemSpecMap.get("props"));
 
                         }
 
