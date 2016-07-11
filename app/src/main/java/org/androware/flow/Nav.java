@@ -144,7 +144,7 @@ public class Nav  {
                             Map itemSpecMap = (Map) items.get(position);
                             //l("target: " + listItemSpec.target);
                             thisNav.target = (String)itemSpecMap.get("target");
-                            activity.loadStep(thisNav, (String)itemSpecMap.get("props"));
+                            activity.loadStep(thisNav, itemSpecMap.get("props"));
 
                         }
 
