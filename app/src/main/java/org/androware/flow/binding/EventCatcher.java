@@ -17,6 +17,7 @@ import android.widget.NumberPicker;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.androware.androbeans.utils.FilterLog;
@@ -228,9 +229,15 @@ public class EventCatcher  {
         imageView.setImageResource(ResourceUtils.getResId("drawable", (String)beanBinder.get(pivot.beanField)));
     }
 
+    public void setTextView(TextView textView, Pivot pivot, BeanBinder beanBinder) {
+        textView.setText((String)beanBinder.get(pivot.beanField));
+    }
+
     public void catchWidget(View widget, Pivot pivot, BeanBinder beanBinder) {
         if (widget instanceof EditText) {
             catchEditText((EditText)widget, pivot, beanBinder);
+        } else if (widget instanceof TextView) {
+            setTextView((TextView) widget, pivot, beanBinder);
         } else if (widget instanceof DatePicker) {
             catchDatePicker((DatePicker) widget, pivot, beanBinder);
         } else if (widget instanceof CompoundButton) {

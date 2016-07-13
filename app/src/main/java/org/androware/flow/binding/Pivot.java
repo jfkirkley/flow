@@ -10,9 +10,13 @@ package org.androware.flow.binding;
     public String componentId;
 
     public Pivot(String beanFieldSpec, String componentId) {
-        String tks[] = beanFieldSpec.split("\\.");
-        beanId = tks[0];
-        beanField = tks[1];
+        if(beanFieldSpec!=null && beanFieldSpec.indexOf('.') != -1) {
+            String tks[] = beanFieldSpec.split("\\.");
+            beanId = tks[0];
+            beanField = tks[1];
+        } else {
+            beanField = beanFieldSpec;
+        }
         this.componentId = componentId;
     }
 
