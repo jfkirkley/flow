@@ -5,6 +5,10 @@ import org.androware.androbeans.utils.ReflectionUtils;
 
 import org.androware.flow.Step;
 
+import java.sql.Ref;
+
+import static android.R.attr.name;
+
 
 /**
  * Created by jkirkley on 7/6/16.
@@ -28,7 +32,13 @@ public class BeanBinder {
     }
 
     public Object get(String name) {
-        return ReflectionUtils.getFieldValue(bean, name);
+        int i = name.indexOf('(');
+        if(i != -1) {
+            // this is a getter method
+            return ReflectionUtils.callMethod(bean, name.substring(0, i));
+        } else {
+            return ReflectionUtils.getFieldValue(bean, name);
+        }
     }
 
     public void set(String name, Object value) {
@@ -38,7 +48,13 @@ public class BeanBinder {
     public void set(String name, Object value, boolean broadcastChange) {
         l("set:  " + name + " = " + value);
 
-        ReflectionUtils.setField(bean.getClass(), name, bean, value);
+        int i = name.indexOf('(');
+        if(i != -1) {
+            // this is a setter method
+            ReflectionUtils.callMethod(bean, name.substring(0, i), value);
+        } else {
+            ReflectionUtils.setField(bean.getClass(), name, bean, value);
+        }
 
         if(broadcastChange) {
             step.getFlow().getBindEngine().broadCast2Mappers(new Pivot(beanId + "." + name, null), value);

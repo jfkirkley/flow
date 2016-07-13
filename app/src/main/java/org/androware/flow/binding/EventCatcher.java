@@ -1,5 +1,6 @@
 package org.androware.flow.binding;
 
+import android.media.Image;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.CalendarView;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 
@@ -153,7 +155,7 @@ public class EventCatcher  {
         public CompoundButtonCatcher(CompoundButton compoundButton, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
             oldValue = (boolean)beanBinder.get(pivot.beanField);
-            oldValue = compoundButton.isChecked();
+            compoundButton.setChecked(oldValue);
             compoundButton.setOnCheckedChangeListener(this);
         }
         @Override
@@ -222,6 +224,10 @@ public class EventCatcher  {
 
     }
 
+    public void setImageView(ImageView imageView, Pivot pivot, BeanBinder beanBinder) {
+        imageView.setImageResource(ResourceUtils.getResId("drawable", (String)beanBinder.get(pivot.beanField)));
+    }
+
     public void catchWidget(View widget, Pivot pivot, BeanBinder beanBinder) {
         if (widget instanceof EditText) {
             catchEditText((EditText)widget, pivot, beanBinder);
@@ -235,6 +241,8 @@ public class EventCatcher  {
             catchSpinner((Spinner)widget, pivot, beanBinder);
         } else if (widget instanceof RadioGroup) {
             catchRadioGroup((RadioGroup) widget, pivot, beanBinder);
+        } else if (widget instanceof ImageView) {
+            setImageView((ImageView) widget, pivot, beanBinder);
         }
 
     }
