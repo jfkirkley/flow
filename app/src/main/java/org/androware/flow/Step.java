@@ -51,21 +51,23 @@ public class Step {
     public void overWriteProps(Bundle extras, boolean doInit) {
         for (String prop : overwritableProps) {
 
-            if(ReflectionUtils.getFieldType(getClass(), prop) == String.class) {
+            if (ReflectionUtils.getFieldType(getClass(), prop) == String.class) {
                 String value = extras.getString(prop);
                 if (value != null) {
                     ReflectionUtils.forceSetField(Step.class, prop, this, value);
                 }
             } else if (prop.equals("viewCustomizerSpec")) {
-                Map map = (Map)extras.getSerializable(prop);
-                // TODO, make this more generic please
-                try {
-                    viewCustomizerSpec = (ConstructorSpec)ObjectReaderFactory.getInstance().makeAndRunInitializingMapReader(map, ConstructorSpec.class);
-                } catch (ObjectReadException e) {
+                Map map = (Map) extras.getSerializable(prop);
+                if (map != null) {
+                    // TODO, make this more generic please
+                    try {
+                        viewCustomizerSpec = (ConstructorSpec) ObjectReaderFactory.getInstance().makeAndRunInitializingMapReader(map, ConstructorSpec.class);
+                    } catch (ObjectReadException e) {
+                    }
                 }
             }
         }
-        if(doInit){
+        if (doInit) {
             __init__();
         }
     }
@@ -135,7 +137,7 @@ public class Step {
         if (viewCustomizerSpec != null) {
             viewCustomizer = (ViewCustomizer) viewCustomizerSpec.build();
         }
-        if(twoWayMapper != null){
+        if (twoWayMapper != null) {
             twoWayMapper.setStep(this);
         }
     }
@@ -155,7 +157,7 @@ public class Step {
 
     public void setNavHandlers(View view, FlowContainerActivity activity) {
 
-        if(navMap != null) {
+        if (navMap != null) {
             for (String targetKey : navMap.keySet()) {
                 Nav nav = navMap.get(targetKey);
                 nav.setNavHandler(view, activity, targetKey);
@@ -204,8 +206,8 @@ public class Step {
 
     public List popParamsToLastEndPoint() {
         List list = new ArrayList();
-        if(previousParamStackEndPoint >= 0) {
-            while(paramStack.size() > previousParamStackEndPoint) {
+        if (previousParamStackEndPoint >= 0) {
+            while (paramStack.size() > previousParamStackEndPoint) {
                 list.add(paramStack.pop());
             }
         }
