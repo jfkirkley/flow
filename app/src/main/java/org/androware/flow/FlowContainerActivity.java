@@ -120,15 +120,18 @@ public class FlowContainerActivity extends FragmentActivity {
         l("load step: " + nav.target);
         Step step = flow.getStep(nav);
 
-        step.pushParams(params, stepStack);
+        if( step != null ) {  // step generators may return null to indicate a boundary has been reached
 
-        Class processorClass = getProcessorType(step);
+            step.pushParams(params, stepStack);
 
-        if(processorClass == null || isFragment(processorClass)) {
-            loadStepFragment(step);
+            Class processorClass = getProcessorType(step);
 
-        } else if(isActivity(processorClass)) {
-            loadActivity(step, processorClass);
+            if (processorClass == null || isFragment(processorClass)) {
+                loadStepFragment(step);
+
+            } else if (isActivity(processorClass)) {
+                loadActivity(step, processorClass);
+            }
         }
     }
 

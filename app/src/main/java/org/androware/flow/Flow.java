@@ -43,9 +43,17 @@ public class Flow  {
 
         if(nav.target == null /* default is next */
                 || nav.target.equals(Nav.GEN_NEXT)) {
-            return stepGenerator.next();
+            if(!stepGenerator.atEnd()) {
+                return stepGenerator.next();
+            } else {
+                return null;
+            }
         } else if(nav.target.equals(Nav.GEN_PREV)) {
-            return stepGenerator.prev();
+            if(!stepGenerator.atStart()) {
+                return stepGenerator.prev();
+            } else {
+                return null;
+            }
         }
         try {
             int index = Integer.parseInt(nav.target);
