@@ -78,12 +78,16 @@ public class Flow  {
 
         if(nav.usesStepGenerator()) {
             step = generateStep(nav);
-            steps.put(step.getName(), step);
+            if(step != null) {
+                steps.put(step.getName(), step);
+            }
         } else {
             step = steps.get(nav.target);
             step.setName(nav.target);
         }
-        step.setCurrNav(nav);
+        if(step != null) {
+            step.setCurrNav(nav);
+        }
         return step;
     }
 
