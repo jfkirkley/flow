@@ -10,7 +10,7 @@ public class StepGeneratorLoader implements ObjectLoader {
 
     @Override
     public Object load(ObjectLoaderSpec spec, Step step) {
-        return new BeanBinder(step.getFlow().stepGenerator, null, step);
+        return new BeanBinder(step.getFlow().stepGenerator, spec.objectId, step);
     }
 
 }

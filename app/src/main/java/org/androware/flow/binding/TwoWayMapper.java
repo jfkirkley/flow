@@ -46,7 +46,9 @@ public class TwoWayMapper {
 
         for (String beanKey : pivots.keySet()) {
             Pivot pivot = pivots.get(beanKey);
-            stepFragment.updateWidget(pivot.componentId, beanBinder.get(pivot.beanField));
+            if(pivot.matches(beanBinder) ) {
+                stepFragment.updateWidget(pivot.componentId, beanBinder.get(pivot.beanField));
+            }
         }
 
     }

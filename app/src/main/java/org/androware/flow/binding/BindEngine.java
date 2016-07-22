@@ -32,11 +32,11 @@ public class BindEngine {
             beanBinder.set(pivot.beanField, newValue, false);
 
             // broadcast
-            broadCast2Mappers(pivot, newValue);
+            broadcast2Mappers(pivot, newValue);
         }
     }
 
-    public void broadCast2Mappers(Pivot pivot, Object newValue) {
+    public void broadcast2Mappers(Pivot pivot, Object newValue) {
         ignoreEvents = true;   // suppress events sent as a result of mapping values (infinite loop)
 
         // broadcast change to mappers

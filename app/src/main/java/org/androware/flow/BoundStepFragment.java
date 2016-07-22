@@ -17,7 +17,9 @@ import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.EventCatcher;
 import org.androware.flow.binding.TwoWayMapper;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -25,15 +27,29 @@ import java.util.Calendar;
  */
 
 public class BoundStepFragment extends StepFragment {
-    BeanBinder beanBinder = null;
+    List<BeanBinder> binderList;
     boolean needsUpdate = false;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        if(beanBinder == null) {
-            beanBinder = (BeanBinder) step.objectLoaderSpec.buildAndLoad(step);
-            EventCatcher.inst(step.getFlow().getBindEngine()).setAll(step, beanBinder, view);
+        if(binderList == null) {
+
+            Object beanObj = step.objectLoaderSpec.buildAndLoad(step);
+
+
+            if (beanObj instanceof List) {
+                binderList = (List) beanObj;
+            } else {
+                binderList = new ArrayList<>();
+                binderList.add((BeanBinder) beanObj);
+            }
+
+            for(BeanBinder beanBinder: binderList) {
+                EventCatcher.inst(step.getFlow().getBindEngine()).setAll(step, beanBinder, view);
+            }
+
         }
 
         return view;
@@ -47,7 +63,9 @@ public class BoundStepFragment extends StepFragment {
         if(needsUpdate) {
             TwoWayMapper twoWayMapper = step.twoWayMapper;
 
-            twoWayMapper.refresh(beanBinder);
+            for(BeanBinder beanBinder: binderList) {
+                twoWayMapper.refresh(beanBinder);
+            }
 
             needsUpdate = false;
         }

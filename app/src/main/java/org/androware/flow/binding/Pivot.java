@@ -24,6 +24,10 @@ package org.androware.flow.binding;
         return beanId + ":" + beanField; // + ":" + componentId;
     }
 
+    public boolean matches(BeanBinder beanBinder) {
+        return beanBinder.beanId.equals(beanId);
+    }
+
     public String toString() {
         return beanId + ":" + beanField + ":" + componentId;
     }

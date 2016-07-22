@@ -5,10 +5,6 @@ import org.androware.androbeans.utils.ReflectionUtils;
 
 import org.androware.flow.Step;
 
-import java.sql.Ref;
-
-import static android.R.attr.name;
-
 
 /**
  * Created by jkirkley on 7/6/16.
@@ -57,7 +53,7 @@ public class BeanBinder {
         }
 
         if(broadcastChange) {
-            step.getFlow().getBindEngine().broadCast2Mappers(new Pivot(beanId + "." + name, null), value);
+            step.getFlow().getBindEngine().broadcast2Mappers(new Pivot(beanId + "." + name, null), value);
         }
     }
 

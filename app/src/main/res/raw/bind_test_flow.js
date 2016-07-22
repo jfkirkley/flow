@@ -17,11 +17,17 @@
                 }
             },
             "objectLoaderSpec": {
-                "objectLoaderClassName": "org.androware.flow.JsonObjectLoader",
-                "objectClassName": "org.androware.flow.test_objs.TestWrapper",
-                "objectId": "b1",
+                "objectLoaderClassName": "org.androware.flow.MultiObjectLoader",
                 "properties": {
-                    "rawResourceName": "test_wrapper"
+                    "loaderClasses": {
+                        "b1": {
+                            "loaderClass": "org.androware.flow.JsonObjectLoader",
+                            "objectClass": "org.androware.flow.test_objs.TestWrapper",
+                            "properties": {
+                                "rawResourceName": "test_wrapper"
+                            }
+                        }
+                    }
                 }
             },
             "parentContainer": "fragmentContainer",
@@ -101,6 +107,8 @@
                 "objectLoaderClassName": "org.androware.flow.CachedObjectLoader",
                 "objectId": "b1"
             },
+
+            "transitionClassName": "org.androware.flow.test_objs.TestBindStepTransition",
 
             "parentContainer": "fragmentContainer",
             "processor": "org.androware.flow.BoundStepFragment",
