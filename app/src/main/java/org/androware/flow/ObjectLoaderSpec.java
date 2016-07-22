@@ -45,4 +45,10 @@ public class ObjectLoaderSpec {
         return objectLoader.load(this, step);
     }
 
+    public void addProp(String key, Object value) {
+        if(properties == null){
+            properties = new HashMap<>();
+        }
+        properties.put(key, value);
+    }
 }

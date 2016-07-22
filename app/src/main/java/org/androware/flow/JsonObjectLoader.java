@@ -29,6 +29,7 @@ public class JsonObjectLoader implements ObjectLoader {
             Object object = null;
 
             Class objectClass = ReflectionUtils.getClass(objectClassName);
+
             if (spec.properties.containsKey(RAW_RESOURCE_NAME)) {
                 try {
 
@@ -56,6 +57,11 @@ public class JsonObjectLoader implements ObjectLoader {
                 } catch (ObjectReadException e) {
                     // TODO handle ex
                 }
+            }
+
+            else {
+                // just instantiate the object from default constructor
+                object = ReflectionUtils.newInstance(objectClass);
             }
 
             BeanBinder beanBinder = new BeanBinder(object, spec.objectId, step);
