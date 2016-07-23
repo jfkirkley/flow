@@ -261,9 +261,11 @@ public class EventCatcher  {
 
         for(String beanKey: pivots.keySet()) {
             Pivot pivot = pivots.get(beanKey);
-            l("setall pivot: " + pivot);
-            View view = rootView.findViewById(ResourceUtils.getResId("id", pivot.componentId));
-            catchWidget(view, pivot, beanBinder);
+            if(pivot.matches(beanBinder)) {
+                l("setall pivot: " + pivot);
+                View view = rootView.findViewById(ResourceUtils.getResId("id", pivot.componentId));
+                catchWidget(view, pivot, beanBinder);
+            }
         }
 
     }

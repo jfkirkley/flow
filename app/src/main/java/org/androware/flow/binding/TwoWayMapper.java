@@ -2,7 +2,6 @@ package org.androware.flow.binding;
 
 import org.androware.flow.BoundStepFragment;
 import org.androware.flow.Step;
-import org.androware.flow.StepFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class TwoWayMapper {
 
         for (String beanKey : pivots.keySet()) {
             Pivot pivot = pivots.get(beanKey);
-            if(pivot.matches(beanBinder) ) {
+            if( pivot.matches(beanBinder) ) {
                 stepFragment.updateWidget(pivot.componentId, beanBinder.get(pivot.beanField));
             }
         }
