@@ -8,7 +8,8 @@ import java.util.HashMap;
  * Created by jkirkley on 7/4/16.
  */
 
-public class ObjectSaverSpec {
+public class
+ObjectSaverSpec {
 
     public String objectSaverClassName;
     public String objectId;
@@ -23,4 +24,10 @@ public class ObjectSaverSpec {
         objectPersistor.save(this, object);
     }
 
+    public void addProp(String key, Object value) {
+        if(properties == null){
+            properties = new HashMap<>();
+        }
+        properties.put(key, value);
+    }
 }
