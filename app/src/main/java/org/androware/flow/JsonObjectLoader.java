@@ -30,11 +30,14 @@ public class JsonObjectLoader implements ObjectLoader {
 
             Class objectClass = ReflectionUtils.getClass(objectClassName);
 
-            if (spec.properties.containsKey(RAW_RESOURCE_NAME)) {
+            String rawResource = (String) spec.properties.get(RAW_RESOURCE_NAME);
+            String extFilePath = (String) spec.properties.get(EXT_FILE_PATH);
+
+            if ( rawResource != null ) {
                 try {
 
-                    object =  ObjectReaderFactory.getInstance().makeAndRunJsonReader(
-                            (String) spec.properties.get(RAW_RESOURCE_NAME),
+                    object = ObjectReaderFactory.getInstance().makeAndRunJsonReader(
+                            rawResource,
                             objectClass,
                             null);
 
@@ -43,13 +46,16 @@ public class JsonObjectLoader implements ObjectLoader {
                 }
             }
 
-            else if (spec.properties.containsKey(EXT_FILE_PATH)) {
+            else if ( extFilePath != null &&
+                    Utils.externalFileExists(
+                            ObjectReaderFactory.getInstance().activity, "", "", extFilePath )) {
+
                 try {
 
                     object = ObjectReaderFactory.getInstance().makeAndRunJsonReader(
                             new FileInputStream(
                                     Utils.getExternalFile(ObjectReaderFactory.getInstance().activity, "", "",
-                                    (String) spec.properties.get(EXT_FILE_PATH))),
+                                            extFilePath )),
                             objectClass,
                             null);
 
