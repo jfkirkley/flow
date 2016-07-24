@@ -29,6 +29,7 @@ import java.util.List;
 public class BoundStepFragment extends StepFragment {
     List<BeanBinder> binderList;
     boolean needsUpdate = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -38,7 +39,6 @@ public class BoundStepFragment extends StepFragment {
 
             Object beanObj = step.objectLoaderSpec.buildAndLoad(step);
 
-
             if (beanObj instanceof List) {
                 binderList = (List) beanObj;
             } else {
@@ -46,15 +46,17 @@ public class BoundStepFragment extends StepFragment {
                 binderList.add((BeanBinder) beanObj);
             }
 
-            for(BeanBinder beanBinder: binderList) {
-                EventCatcher.inst(step.getFlow().getBindEngine()).setAll(step, beanBinder, view);
-            }
+            // need the root view, as some components are higher in the hierarchy than the current fragment
+            final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.getActivity().findViewById(android.R.id.content)).getChildAt(0);
 
+            for(BeanBinder beanBinder: binderList) {
+                EventCatcher.inst(step.getFlow().getBindEngine()).setAll(step, beanBinder, viewGroup, view);
+            }
         }
 
         return view;
-
     }
+
 
     @Override
     public void onResume() {

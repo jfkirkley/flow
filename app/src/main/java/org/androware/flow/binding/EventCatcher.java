@@ -254,7 +254,7 @@ public class EventCatcher  {
 
     }
 
-    public void setAll(Step step, BeanBinder beanBinder, View rootView) {
+    public void setAll(Step step, BeanBinder beanBinder, View rootView, View fragmentView) {
         TwoWayMapper twoWayMapper = step.twoWayMapper;
 
         Map<String, Pivot> pivots = twoWayMapper.getPivots();
@@ -263,7 +263,10 @@ public class EventCatcher  {
             Pivot pivot = pivots.get(beanKey);
             if(pivot.matches(beanBinder)) {
                 l("setall pivot: " + pivot);
-                View view = rootView.findViewById(ResourceUtils.getResId("id", pivot.componentId));
+                View view = fragmentView.findViewById(ResourceUtils.getResId("id", pivot.componentId));
+                if( view == null ) {
+                    view = rootView.findViewById(ResourceUtils.getResId("id", pivot.componentId));
+                }
                 catchWidget(view, pivot, beanBinder);
             }
         }
