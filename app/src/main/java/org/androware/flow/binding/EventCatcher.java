@@ -234,7 +234,7 @@ public class EventCatcher  {
     public void catchWidget(View widget, Pivot pivot, BeanBinder beanBinder) {
         if (widget instanceof TextView) {
 
-            catchTextView((EditText)widget, pivot, beanBinder);
+            catchTextView((TextView) widget, pivot, beanBinder);
 
             //} else if (widget instanceof TextView) {
             //  setTextView((TextView) widget, pivot, beanBinder);
