@@ -1,6 +1,5 @@
 package org.androware.flow.binding;
 
-import android.media.Image;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -22,7 +21,6 @@ import android.widget.TimePicker;
 
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
-import org.androware.flow.Constants;
 import org.androware.flow.GUI_utils;
 import org.androware.flow.Step;
 
@@ -52,16 +50,16 @@ public class EventCatcher  {
     }
 
 
-    public class EditTextCatcher implements TextWatcher {
+    public class TextViewCatcher implements TextWatcher {
 
         Pivot pivot;
         CharSequence oldValue;
 
-        public EditTextCatcher(EditText editText, Pivot pivot, BeanBinder beanBinder){
+        public TextViewCatcher(TextView textView, Pivot pivot, BeanBinder beanBinder){
             this.pivot = pivot;
             oldValue = (CharSequence)beanBinder.get(pivot.beanField);
-            editText.setText(oldValue);
-            editText.addTextChangedListener(this);
+            textView.setText(oldValue);
+            textView.addTextChangedListener(this);
         }
 
         @Override
@@ -82,8 +80,8 @@ public class EventCatcher  {
         }
     }
 
-    public void catchEditText(EditText editText, Pivot pivot, BeanBinder beanBinder) {
-        new EditTextCatcher(editText, pivot, beanBinder);
+    public void catchTextView(TextView textView, Pivot pivot, BeanBinder beanBinder) {
+        new TextViewCatcher(textView, pivot, beanBinder);
     }
 
     public void catchNumberPicker(NumberPicker numberPicker, Pivot pivot) {
@@ -234,10 +232,13 @@ public class EventCatcher  {
     }
 
     public void catchWidget(View widget, Pivot pivot, BeanBinder beanBinder) {
-        if (widget instanceof EditText) {
-            catchEditText((EditText)widget, pivot, beanBinder);
-        } else if (widget instanceof TextView) {
-            setTextView((TextView) widget, pivot, beanBinder);
+        if (widget instanceof TextView) {
+
+            catchTextView((EditText)widget, pivot, beanBinder);
+
+            //} else if (widget instanceof TextView) {
+            //  setTextView((TextView) widget, pivot, beanBinder);
+
         } else if (widget instanceof DatePicker) {
             catchDatePicker((DatePicker) widget, pivot, beanBinder);
         } else if (widget instanceof CompoundButton) {
