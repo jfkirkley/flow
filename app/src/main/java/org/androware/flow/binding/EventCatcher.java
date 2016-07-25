@@ -8,7 +8,7 @@ import android.widget.CalendarView;
 
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
+
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -262,13 +262,18 @@ public class EventCatcher  {
 
         for(String beanKey: pivots.keySet()) {
             Pivot pivot = pivots.get(beanKey);
-            if(pivot.matches(beanBinder)) {
+
+            if(!pivot.isWidgetConnected() && pivot.matches(beanBinder)) {
+
                 l("setall pivot: " + pivot);
-                View view = fragmentView.findViewById(ResourceUtils.getResId("id", pivot.componentId));
+                View view = fragmentView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+
                 if( view == null ) {
-                    view = rootView.findViewById(ResourceUtils.getResId("id", pivot.componentId));
+                    view = rootView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
                 }
+
                 catchWidget(view, pivot, beanBinder);
+                pivot.setWidgetConnected(true);
             }
         }
 

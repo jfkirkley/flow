@@ -7,9 +7,11 @@ package org.androware.flow.binding;
 
     public String beanId;
     public String beanField;
-    public String componentId;
+    public String widgetId;
 
-    public Pivot(String beanFieldSpec, String componentId) {
+    private boolean widgetConnected = false;
+
+    public Pivot(String beanFieldSpec, String widgetId) {
         if(beanFieldSpec!=null && beanFieldSpec.indexOf('.') != -1) {
             String tks[] = beanFieldSpec.split("\\.");
             beanId = tks[0];
@@ -17,11 +19,11 @@ package org.androware.flow.binding;
         } else {
             beanField = beanFieldSpec;
         }
-        this.componentId = componentId;
+        this.widgetId = widgetId;
     }
 
     public String getKey() {
-        return beanId + ":" + beanField; // + ":" + componentId;
+        return beanId + ":" + beanField; // + ":" + widgetId;
     }
 
     public boolean matches(BeanBinder beanBinder) {
@@ -29,6 +31,15 @@ package org.androware.flow.binding;
     }
 
     public String toString() {
-        return beanId + ":" + beanField + ":" + componentId;
+        return beanId + ":" + beanField + ":" + widgetId;
     }
+
+    public boolean isWidgetConnected() {
+        return widgetConnected;
+    }
+
+    public void setWidgetConnected(boolean widgetConnected) {
+        this.widgetConnected = widgetConnected;
+    }
+
 }
