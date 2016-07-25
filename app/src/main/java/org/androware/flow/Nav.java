@@ -134,8 +134,8 @@ public class Nav  {
                 }
             });
         } else if (event.equals("onItemClick")) {
-            ListView listView = (ListView) navCompView;
-            listView.setOnItemClickListener(
+            AdapterView adapterView = (AdapterView) navCompView;
+            adapterView.setOnItemClickListener(
                     new AdapterView.OnItemClickListener() {
 
                         @Override

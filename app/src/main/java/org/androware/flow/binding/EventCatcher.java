@@ -10,7 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 
 import android.widget.RadioGroup;
@@ -92,16 +91,16 @@ public class EventCatcher  {
 
     }
 
-    public class SpinnerCatcher implements AdapterView.OnItemSelectedListener {
+    public class AdapterViewCatcher implements AdapterView.OnItemSelectedListener {
         Pivot pivot;
         Object oldValue;
 
-        public SpinnerCatcher(Spinner spinner, Pivot pivot, BeanBinder beanBinder){
+        public AdapterViewCatcher(AdapterView adapterView, Pivot pivot, BeanBinder beanBinder){
             this.pivot = pivot;
             oldValue = beanBinder.get(pivot.beanField);
-            GUI_utils.setAdapterViewSelectedItem(spinner, oldValue);
+            GUI_utils.setAdapterViewSelectedItem(adapterView, oldValue);
 
-            spinner.setOnItemSelectedListener(this);
+            adapterView.setOnItemSelectedListener(this);
         }
 
         @Override
@@ -117,10 +116,6 @@ public class EventCatcher  {
         public void onNothingSelected(AdapterView<?> parent) {
 
         }
-    }
-
-    public void catchSpinner(Spinner spinner, Pivot pivot, BeanBinder beanBinder){
-        new SpinnerCatcher(spinner, pivot, beanBinder);
     }
 
     public class CalendarViewCatcher implements CalendarView.OnDateChangeListener {
@@ -219,8 +214,8 @@ public class EventCatcher  {
         new DatePickerCatcher(datePicker, pivot, beanBinder);
     }
 
-    public void catchListView(ListView listView, Pivot pivot) {
-
+    public void catchAdapterView(AdapterView adapterView, Pivot pivot, BeanBinder beanBinder) {
+        new AdapterViewCatcher(adapterView, pivot, beanBinder);
     }
 
     public void setImageView(ImageView imageView, Pivot pivot, BeanBinder beanBinder) {
@@ -245,10 +240,10 @@ public class EventCatcher  {
             catchCompoundButton((CompoundButton) widget, pivot, beanBinder);
         } else if (widget instanceof CalendarView) {
             catchCalendarView((CalendarView) widget, pivot, beanBinder);
-        } else if (widget instanceof Spinner) {
-            catchSpinner((Spinner)widget, pivot, beanBinder);
         } else if (widget instanceof RadioGroup) {
             catchRadioGroup((RadioGroup) widget, pivot, beanBinder);
+        } else if (widget instanceof AdapterView) {
+            catchAdapterView((AdapterView) widget, pivot, beanBinder);
         } else if (widget instanceof ImageView) {
             setImageView((ImageView) widget, pivot, beanBinder);
         }
