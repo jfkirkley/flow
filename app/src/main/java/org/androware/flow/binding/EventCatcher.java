@@ -258,13 +258,17 @@ public class EventCatcher  {
         for(String beanKey: pivots.keySet()) {
             Pivot pivot = pivots.get(beanKey);
 
-            if(!pivot.isWidgetConnected() && pivot.matches(beanBinder)) {
+            if(pivot.matches(beanBinder)) {
 
                 l("setall pivot: " + pivot);
                 View view = fragmentView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
 
                 if( view == null ) {
-                    view = rootView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+                    if(!pivot.isWidgetConnected()) {
+                        view = rootView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+                    } else {
+                        continue;   // global widget already connected
+                    }
                 }
 
                 catchWidget(view, pivot, beanBinder);
