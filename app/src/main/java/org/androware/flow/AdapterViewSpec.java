@@ -19,9 +19,12 @@ public class AdapterViewSpec {
 
     public List<Object> items;
 
+    public ConstructorSpec itemGeneratorSpec;
+
+    private ItemGenerator itemGenerator;
+
     public AdapterViewSpec() {
     }
-
 
     public Object getDefaultItemSpec(){
         return getItemSpec(0);
@@ -34,6 +37,19 @@ public class AdapterViewSpec {
         return items.get(position);
     }
 
+    public void __init__() {
+        if(itemGeneratorSpec != null){
+            itemGenerator = (ItemGenerator) itemGeneratorSpec.build();
+        }
+    }
+
+    public List getItems(Object spec) {
+        if(itemGenerator != null) {
+            return itemGenerator.getItems(spec);
+        }
+
+        return items;
+    }
 
 }
 
