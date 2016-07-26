@@ -95,8 +95,9 @@ public class GUI_utils {
                 for (String k : ui.adapterViews.keySet()) {
                     AdapterViewSpec adapterViewSpec = ui.adapterViews.get(k);
                     buildAdapterView(activity, adapterViewSpec, view);
-                    Nav nav = step.navMap.get(k);
-                    if(nav != null){
+
+                    if(step.navMap != null && step.navMap.containsKey(k)) {
+                        Nav nav = step.navMap.get(k);
                         nav.setItems(adapterViewSpec.items);
                     }
                 }
