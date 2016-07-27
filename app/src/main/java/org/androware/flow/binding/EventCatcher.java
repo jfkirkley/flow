@@ -226,6 +226,30 @@ public class EventCatcher  {
         textView.setText((String)beanBinder.get(pivot.beanField));
     }
 
+
+    public void updateWidget(String componentId, Object value, View view) {
+
+        View widget = view.findViewById(ResourceUtils.getResId("id", componentId));
+
+        if (widget != null) {
+            if (widget instanceof TextView) {
+                ((TextView) widget).setText((CharSequence) value);
+            } else if (widget instanceof DatePicker) {
+                Calendar calendar = (Calendar) value;
+                ((DatePicker) widget).updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            } else if (widget instanceof CompoundButton) {
+                ((CompoundButton) widget).setChecked((boolean) value);
+            } else if (widget instanceof CalendarView) {
+                ((CalendarView) widget).setDate((long) value);
+            } else if (widget instanceof RadioGroup) {
+                ((RadioGroup) widget).check((int) value);
+            } else if (widget instanceof AdapterView) {
+                GUI_utils.setAdapterViewSelectedItem((AdapterView)widget, value);
+            }
+        }
+    }
+
+
     public void catchWidget(View widget, Pivot pivot, BeanBinder beanBinder) {
         if (widget instanceof TextView) {
 
@@ -277,6 +301,8 @@ public class EventCatcher  {
         }
 
     }
+
+
 
     private static EventCatcher inst = null;
 

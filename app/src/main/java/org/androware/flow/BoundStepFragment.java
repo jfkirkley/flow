@@ -52,6 +52,9 @@ public class BoundStepFragment extends StepFragment {
             for(BeanBinder beanBinder: binderList) {
                 EventCatcher.inst(step.getFlow().getBindEngine()).setAll(step, beanBinder, viewGroup, view);
             }
+        } else {
+
+            needsUpdate = true;
         }
 
         return view;
@@ -63,6 +66,7 @@ public class BoundStepFragment extends StepFragment {
         super.onResume();
 
         if(needsUpdate) {
+
             TwoWayMapper twoWayMapper = step.twoWayMapper;
 
             for(BeanBinder beanBinder: binderList) {
@@ -78,25 +82,13 @@ public class BoundStepFragment extends StepFragment {
         View view = getView();
 
         if(view != null) {
-            View widget = view.findViewById(ResourceUtils.getResId("id", componentId));
 
-            if (widget != null) {
-                if (widget instanceof TextView) {
-                    ((TextView) widget).setText((CharSequence) value);
-                } else if (widget instanceof DatePicker) {
-                    //(() widget).set(() value);
-                    Calendar calendar = (Calendar) value;
-                    ((DatePicker) widget).updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-                } else if (widget instanceof CompoundButton) {
-                    ((CompoundButton) widget).setChecked((boolean) value);
-                } else if (widget instanceof CalendarView) {
-                    ((CalendarView) widget).setDate((long) value);
-                } else if (widget instanceof RadioGroup) {
-                    ((RadioGroup) widget).check((int) value);
-                }
-            }
+            EventCatcher.inst(null).updateWidget(componentId, value, view);
+
         } else {
-            needsUpdate = true;   // vieww == null means not visible, so flag update for when onResume is called
+
+            // view == null means not visible, so flag update for when onResume is called
+            needsUpdate = true;
         }
 
     }
