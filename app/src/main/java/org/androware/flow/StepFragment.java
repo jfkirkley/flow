@@ -75,6 +75,8 @@ public class StepFragment extends Fragment implements TransitionActor {
         // Inflate the layout for this fragment
         View view = Utils.inflateView(step.layout, inflater, container);
 
+        this.step.setStepFragment(this);
+
         GUI_utils.buildUI(getActivity(), step, view);
 
         step.setNavHandlers(view, (FlowContainerActivity) getActivity());

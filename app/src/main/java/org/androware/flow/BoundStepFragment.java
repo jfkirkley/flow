@@ -35,6 +35,7 @@ public class BoundStepFragment extends StepFragment {
 
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
+
         if(binderList == null) {
 
             Object beanObj = step.objectLoaderSpec.buildAndLoad(step);
