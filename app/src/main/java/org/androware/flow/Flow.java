@@ -22,10 +22,13 @@ public class Flow  {
     private HashMap<String, Object> boundObjects =new HashMap<>();
 
     public void setBoundObject(String name, Object object) {
-        boundObjects.put(name, object);
+        if(name != null) {
+            // some beans may not supply an id to avoid being cached
+            boundObjects.put(name, object);
 
-        if( object instanceof BeanBinder){
-            bindEngine.addBeanBinder(name, (BeanBinder)object);
+            if (object instanceof BeanBinder) {
+                bindEngine.addBeanBinder(name, (BeanBinder) object);
+            }
         }
     }
 
@@ -48,6 +51,7 @@ public class Flow  {
             } else {
                 return null;
             }
+
         } else if(nav.target.equals(Nav.GEN_PREV)) {
             if(!stepGenerator.atStart()) {
                 return stepGenerator.prev();
@@ -55,12 +59,13 @@ public class Flow  {
                 return null;
             }
         }
+
         try {
             int index = Integer.parseInt(nav.target);
             return stepGenerator.getStep(index);
         } catch( NumberFormatException e) {
-
         }
+
         return stepGenerator.getStep(nav.target);
     }
 
@@ -121,6 +126,13 @@ public class Flow  {
             // from navs and may be parameterized from there
             stepGenerator = (StepGenerator) stepGeneratorSpec.build();
         }
+
+        // step post init
+        for(String k: steps.keySet()) {
+            Step step = steps.get(k);
+            step.postInit();
+        }
+
     }
 
     public BindEngine getBindEngine() {

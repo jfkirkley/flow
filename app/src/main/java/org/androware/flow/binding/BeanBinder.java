@@ -18,6 +18,7 @@ public class BeanBinder {
 
 
     Object bean;
+
     String beanId;
     Step step;
 
@@ -59,6 +60,10 @@ public class BeanBinder {
 
     public Object getBean() {
         return bean;
+    }
+
+    public String getBeanId() {
+        return beanId;
     }
 
 

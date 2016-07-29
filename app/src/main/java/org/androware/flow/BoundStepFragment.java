@@ -36,23 +36,24 @@ public class BoundStepFragment extends StepFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
 
-        if(binderList == null) {
+        if (binderList == null) {
 
-            Object beanObj = step.objectLoaderSpec.buildAndLoad(step);
+            Object boundBeanObject = step.getBoundBeanObject();
 
-            if (beanObj instanceof List) {
-                binderList = (List) beanObj;
+            if (boundBeanObject instanceof List) {
+                binderList = (List) boundBeanObject;
             } else {
                 binderList = new ArrayList<>();
-                binderList.add((BeanBinder) beanObj);
+                binderList.add((BeanBinder) boundBeanObject);
             }
 
             // need the root view, as some components are higher in the hierarchy than the current fragment
             final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.getActivity().findViewById(android.R.id.content)).getChildAt(0);
 
-            for(BeanBinder beanBinder: binderList) {
+            for (BeanBinder beanBinder : binderList) {
                 EventCatcher.inst(step.getFlow().getBindEngine()).setAll(step, beanBinder, viewGroup, view);
             }
+
         } else {
 
             needsUpdate = true;
@@ -66,11 +67,11 @@ public class BoundStepFragment extends StepFragment {
     public void onResume() {
         super.onResume();
 
-        if(needsUpdate) {
+        if (needsUpdate) {
 
             TwoWayMapper twoWayMapper = step.twoWayMapper;
 
-            for(BeanBinder beanBinder: binderList) {
+            for (BeanBinder beanBinder : binderList) {
                 twoWayMapper.refresh(beanBinder);
             }
 
@@ -82,7 +83,7 @@ public class BoundStepFragment extends StepFragment {
     public void updateWidget(String componentId, Object value) {
         View view = getView();
 
-        if(view != null) {
+        if (view != null) {
 
             EventCatcher.inst(null).updateWidget(componentId, value, view);
 

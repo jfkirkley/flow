@@ -28,6 +28,8 @@ public class Step {
     public static final int MAX_PARAMS = 1024;
 
     private Flow flow;
+
+    private Object boundBeanObject;
     public String layout;
     public String processor = StepFragment.class.getName();
     public String parentContainer;
@@ -132,6 +134,17 @@ public class Step {
         this.currNav = nav;
         this.name = nav.target;
     }
+
+    public void postInit() {
+        loadBoundObject();
+    }
+
+    public void loadBoundObject() {
+        if(objectLoaderSpec != null) {
+            boundBeanObject = objectLoaderSpec.buildAndLoad(this);
+        }
+    }
+
 
     public void __init__() {
         if (viewCustomizerSpec != null) {
@@ -265,6 +278,12 @@ public class Step {
         this.flow = flow;
     }
 
+    public Object getBoundBeanObject() {
+        if(boundBeanObject == null) {
+            loadBoundObject();
+        }
+        return boundBeanObject;
+    }
 
 }
 
