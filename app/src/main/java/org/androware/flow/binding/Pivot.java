@@ -23,7 +23,7 @@ package org.androware.flow.binding;
     }
 
     public String getKey() {
-        return beanId + ":" + beanField; // + ":" + widgetId;
+        return beanId + ":" + beanField + ":" + widgetId;
     }
 
     public boolean matches(BeanBinder beanBinder) {
@@ -31,7 +31,7 @@ package org.androware.flow.binding;
     }
 
     public String toString() {
-        return beanId + ":" + beanField + ":" + widgetId;
+        return getKey();
     }
 
     public boolean isWidgetConnected() {
