@@ -1,6 +1,7 @@
 package org.androware.flow.binding;
 
 import android.text.Editable;
+import android.text.Spannable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,7 +58,14 @@ public class EventCatcher  {
         public TextViewCatcher(TextView textView, Pivot pivot, BeanBinder beanBinder){
             this.pivot = pivot;
             oldValue = (CharSequence)beanBinder.get(pivot.beanField);
-            textView.setText(oldValue);
+
+            if(oldValue instanceof Spannable) {
+                textView.setText(oldValue, TextView.BufferType.SPANNABLE);
+            } else if(oldValue instanceof Editable) {
+                textView.setText(oldValue, TextView.BufferType.EDITABLE);
+            } else {
+                textView.setText(oldValue);
+            }
             textView.addTextChangedListener(this);
         }
 
