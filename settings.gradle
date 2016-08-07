@@ -1,1 +1,4 @@
 include ':app', ':flowharness'
+include ':androbeans'
+project(':androbeans').projectDir = new File(settingsDir, '../Androbeans/app')
+

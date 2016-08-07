@@ -5,6 +5,8 @@ import android.text.Spannable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CalendarView;
 
 import android.widget.CompoundButton;
@@ -14,12 +16,12 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.androware.androbeans.utils.FilterLog;
+import org.androware.androbeans.utils.MultiListenerUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.GUI_utils;
 import org.androware.flow.Step;
@@ -49,6 +51,61 @@ public class EventCatcher  {
         FilterLog.inst().log(BindEngine.TAG, s);
     }
 
+    public class Button2AdapterViewUpdater implements Button.OnClickListener {
+        Pivot pivot;
+        Object oldValue;
+        ArrayAdapter adapter;
+        BeanBinder beanBinder;
+        public Button2AdapterViewUpdater(View baseView, AdapterView adapterView, Pivot pivot, BeanBinder beanBinder){
+            this.pivot = pivot;
+            this.beanBinder = beanBinder;
+            if( adapterView.getAdapter() instanceof ArrayAdapter) {
+                adapter = (ArrayAdapter)adapterView.getAdapter();
+            } else {
+                throw new IllegalArgumentException("Adapter for adapterView must be and ArrayAdapter!");
+            }
+
+            oldValue = beanBinder.get(pivot.beanField);
+            GUI_utils.setAdapterViewSelectedItem(adapterView, oldValue);
+
+            Button button = (Button)baseView.findViewById(ResourceUtils.getResId("id", pivot.bindTriggeringWidgetId));
+
+            MultiListenerUtils.MultiOnClickListener.setListener(button, this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            // it is assumed that another binding has updated the bean, so now update the adapter
+            beanBinder.update(adapter);
+        }
+    }
+
+
+
+    public class Button2TextViewCatcher  implements Button.OnClickListener {
+        Pivot pivot;
+        CharSequence oldValue;
+        TextView textView;
+
+        public Button2TextViewCatcher(View baseView, TextView textView, Pivot pivot, BeanBinder beanBinder){
+            this.pivot = pivot;
+            this.textView = textView;
+            oldValue = (CharSequence)beanBinder.get(pivot.beanField);
+
+            Button button = (Button)baseView.findViewById(ResourceUtils.getResId("id", pivot.bindTriggeringWidgetId));
+
+            MultiListenerUtils.MultiOnClickListener.setListener(button, this, 0);
+        }
+
+        @Override
+        public void onClick(View v) {
+            CharSequence newValue = textView.getText();
+            if(!oldValue.equals(newValue)) {
+                sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
+                oldValue = newValue;
+            }
+        }
+    }
 
     public class TextViewCatcher implements TextWatcher {
 
@@ -87,8 +144,15 @@ public class EventCatcher  {
         }
     }
 
-    public void catchTextView(TextView textView, Pivot pivot, BeanBinder beanBinder) {
-        new TextViewCatcher(textView, pivot, beanBinder);
+    public void catchTextView(View baseView, TextView textView, Pivot pivot, BeanBinder beanBinder) {
+
+        if(pivot.hasOtherTrigger()) {
+            // TODO we only support buttons as other trigger now
+            new Button2TextViewCatcher(baseView, textView, pivot, beanBinder);
+
+        } else {
+            new TextViewCatcher(textView, pivot, beanBinder);
+        }
     }
 
     public void catchNumberPicker(NumberPicker numberPicker, Pivot pivot) {
@@ -222,8 +286,12 @@ public class EventCatcher  {
         new DatePickerCatcher(datePicker, pivot, beanBinder);
     }
 
-    public void catchAdapterView(AdapterView adapterView, Pivot pivot, BeanBinder beanBinder) {
-        new AdapterViewCatcher(adapterView, pivot, beanBinder);
+    public void catchAdapterView(View baseView, AdapterView adapterView, Pivot pivot, BeanBinder beanBinder) {
+        if(pivot.hasOtherTrigger()) {
+            new Button2AdapterViewUpdater(baseView, adapterView, pivot, beanBinder);
+        } else {
+            new AdapterViewCatcher(adapterView, pivot, beanBinder);
+        }
     }
 
     public void setImageView(ImageView imageView, Pivot pivot, BeanBinder beanBinder) {
@@ -258,10 +326,10 @@ public class EventCatcher  {
     }
 
 
-    public void catchWidget(View widget, Pivot pivot, BeanBinder beanBinder) {
+    public void catchWidget(View baseView, View widget, Pivot pivot, BeanBinder beanBinder) {
         if (widget instanceof TextView) {
 
-            catchTextView((TextView) widget, pivot, beanBinder);
+            catchTextView(baseView, (TextView) widget, pivot, beanBinder);
 
             //} else if (widget instanceof TextView) {
             //  setTextView((TextView) widget, pivot, beanBinder);
@@ -275,7 +343,7 @@ public class EventCatcher  {
         } else if (widget instanceof RadioGroup) {
             catchRadioGroup((RadioGroup) widget, pivot, beanBinder);
         } else if (widget instanceof AdapterView) {
-            catchAdapterView((AdapterView) widget, pivot, beanBinder);
+            catchAdapterView(baseView, (AdapterView) widget, pivot, beanBinder);
         } else if (widget instanceof ImageView) {
             setImageView((ImageView) widget, pivot, beanBinder);
         }
@@ -298,12 +366,14 @@ public class EventCatcher  {
                 if( view == null ) {
                     if(!pivot.isWidgetConnected()) {
                         view = rootView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+                        catchWidget(rootView, view, pivot, beanBinder);
                     } else {
                         continue;   // global widget already connected
                     }
+                } else {
+                    catchWidget(fragmentView, view, pivot, beanBinder);
                 }
 
-                catchWidget(view, pivot, beanBinder);
                 pivot.setWidgetConnected(true);
             }
         }

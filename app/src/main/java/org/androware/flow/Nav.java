@@ -4,13 +4,11 @@ package org.androware.flow;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 
 import org.androware.androbeans.utils.FilterLog;
-import org.androware.androbeans.utils.ReflectionUtils;
+import org.androware.androbeans.utils.MultiListenerUtils;
 import org.androware.androbeans.utils.ResourceUtils;
-import org.androware.androbeans.utils.Utils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,11 +16,10 @@ import java.util.Map;
 import java.util.Set;
 
 
-
 /**
  * Created by jkirkley on 5/7/16.
  */
-public class Nav  {
+public class Nav {
     public final static String TAG = "nav";
 
     public String compName;
@@ -44,15 +41,15 @@ public class Nav  {
 
     public String target;
 
-    public boolean isPrev(){
-        if(target != null) {
+    public boolean isPrev() {
+        if (target != null) {
             return target.equals(Nav.GEN_PREV);
         }
         return false;
     }
 
-    public boolean isNext(){
-        if(target != null) {
+    public boolean isNext() {
+        if (target != null) {
             return target.equals(Nav.GEN_NEXT);
         }
         return false;
@@ -73,6 +70,7 @@ public class Nav  {
     public Nav() {
 
     }
+
     public Nav(String target, boolean useStepGenerator) {
         this.target = target;
         this.useStepGenerator = useStepGenerator;
@@ -101,7 +99,7 @@ public class Nav  {
 
 
     public void setTarget(String target) {
-        if(this.target == null || !SPECIAL_NAV_TARGETS.contains(this.target) ) {
+        if (this.target == null || !SPECIAL_NAV_TARGETS.contains(this.target)) {
             this.target = target;
         }
     }
@@ -114,12 +112,12 @@ public class Nav  {
         final Nav thisNav = this;
         View navCompView = null;
 
-        if(compName == null) {
+        if (compName == null) {
             // nothing to do, this nav does not set handlers, (e.g. it is a initNav)
             return;
         }
 
-        if(compName.equals(ROOT_VIEW)) {
+        if (compName.equals(ROOT_VIEW)) {
             navCompView = view;
         } else {
             navCompView = view.findViewById(ResourceUtils.getResId("id", compName));
@@ -127,13 +125,18 @@ public class Nav  {
 
         FilterLog.inst().activateTag(TAG);
         if (event.equals("onClick")) {
-            navCompView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    activity.loadStep(thisNav);
-                }
-            });
+
+            MultiListenerUtils.MultiOnClickListener.setListener(
+                    navCompView,
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            activity.loadStep(thisNav);
+                        }
+                    });
+
         } else if (event.equals("onItemClick")) {
+
             AdapterView adapterView = (AdapterView) navCompView;
             adapterView.setOnItemClickListener(
                     new AdapterView.OnItemClickListener() {
@@ -143,14 +146,16 @@ public class Nav  {
                                                 int position, long id) {
                             Map itemSpecMap = (Map) items.get(position);
                             //l("target: " + listItemSpec.target);
-                            thisNav.target = (String)itemSpecMap.get("target");
+                            thisNav.target = (String) itemSpecMap.get("target");
                             activity.loadStep(thisNav, itemSpecMap.get("props"));
 
                         }
 
                     });
+
         } else if (event.equals("onSwipeLeft")) {
-            NavOnSwipeListener navOnSwipeListener = (NavOnSwipeListener) Utils.getListener(navCompView, "mOnTouchListener");
+
+            NavOnSwipeListener navOnSwipeListener = (NavOnSwipeListener) MultiListenerUtils.getListener(navCompView, "mOnTouchListener");
 
             if (navOnSwipeListener == null) {
                 navCompView.setOnTouchListener(new NavOnSwipeListener(activity, null, thisNav));
@@ -159,7 +164,8 @@ public class Nav  {
             }
 
         } else if (event.equals("onSwipeRight")) {
-            NavOnSwipeListener navOnSwipeListener = (NavOnSwipeListener) Utils.getListener(navCompView, "mOnTouchListener");
+
+            NavOnSwipeListener navOnSwipeListener = (NavOnSwipeListener) MultiListenerUtils.getListener(navCompView, "mOnTouchListener");
 
             if (navOnSwipeListener == null) {
                 navCompView.setOnTouchListener(new NavOnSwipeListener(activity, thisNav, null));

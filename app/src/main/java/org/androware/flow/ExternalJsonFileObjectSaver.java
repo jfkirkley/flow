@@ -1,8 +1,6 @@
-package org.androware.flow.binding;
+package org.androware.flow;
 
 import org.androware.androbeans.utils.ReflectionUtils;
-import org.androware.flow.JsonObjectSaver;
-import org.androware.flow.ObjectSaverSpec;
 
 import static org.androware.flow.JsonObjectLoader.EXT_FILE_PATH;
 

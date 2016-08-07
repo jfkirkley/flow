@@ -66,5 +66,9 @@ public class BeanBinder {
         return beanId;
     }
 
-
+    public void update(Object object) {
+        if( bean instanceof Updatable ) {
+            ((Updatable)bean).update(object);
+        }
+    }
 }

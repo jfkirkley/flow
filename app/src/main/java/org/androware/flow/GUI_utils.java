@@ -98,7 +98,7 @@ public class GUI_utils {
 
                     if(step.navMap != null && step.navMap.containsKey(k)) {
                         Nav nav = step.navMap.get(k);
-                        nav.setItems(adapterViewSpec.items);
+                        nav.setItems(adapterViewSpec.getItems(null));
                     }
                 }
             }

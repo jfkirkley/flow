@@ -1,4 +1,4 @@
-package org.androware.flow.binding;
+package org.androware.flow;
 
 import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.flow.JsonObjectLoader;
