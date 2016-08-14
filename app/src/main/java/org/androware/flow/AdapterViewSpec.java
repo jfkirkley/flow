@@ -2,6 +2,7 @@ package org.androware.flow;
 
 
 import org.androware.androbeans.utils.ConstructorSpec;
+import org.androware.androbeans.utils.ResourceUtils;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  */
 public class AdapterViewSpec {
 
+    public List<String> beanIds;  // TODO, should be an array of ids at least, but probably more framework needed here
     public String viewId;
     public String itemLayoutId;
     public boolean useDefault;
@@ -49,6 +51,10 @@ public class AdapterViewSpec {
         }
 
         return items;
+    }
+
+    public int getItemLayoutId() {
+        return ResourceUtils.getResId("layout", itemLayoutId);
     }
 
 }

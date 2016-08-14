@@ -68,7 +68,7 @@ public class GUI_utils {
     }
 
 
-    public static AdapterView buildAdapterView(Activity activity, AdapterViewSpec adapterViewSpec, View view) {
+    public static AdapterView buildAdapterView(Activity activity, AdapterViewSpec adapterViewSpec, View view, Step step) {
 
         final AdapterView adapterView = (AdapterView) view.findViewById(ResourceUtils.getResId("id", adapterViewSpec.viewId));
 
@@ -76,6 +76,8 @@ public class GUI_utils {
 
             adapterViewSpec.adapterConstructorSpec.plugInValue(activity, "context");
             adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec.getItems(null), "items");
+            adapterViewSpec.adapterConstructorSpec.plugInValue(step, "step");
+            adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec, "adapter_spec");
 
             Adapter adapter = (Adapter)adapterViewSpec.adapterConstructorSpec.build();
 
@@ -94,7 +96,7 @@ public class GUI_utils {
             if (ui.adapterViews != null) {
                 for (String k : ui.adapterViews.keySet()) {
                     AdapterViewSpec adapterViewSpec = ui.adapterViews.get(k);
-                    buildAdapterView(activity, adapterViewSpec, view);
+                    buildAdapterView(activity, adapterViewSpec, view, step);
 
                     if(step.navMap != null && step.navMap.containsKey(k)) {
                         Nav nav = step.navMap.get(k);

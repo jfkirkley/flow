@@ -36,15 +36,19 @@ import java.util.Map;
  * Created by jkirkley on 7/6/16.
  */
 
-public class EventCatcher  {
+public class EventCatcher {
     BindEngine bindEngine;
+
+    boolean suppressEvents = false;
 
     public EventCatcher(BindEngine bindEngine) {
         this.bindEngine = bindEngine;
     }
 
     protected void sendEvent(WidgetEventInfo widgetEventInfo) {
-        bindEngine.handleEvent(widgetEventInfo);
+        if(!suppressEvents) {
+            bindEngine.handleEvent(widgetEventInfo);
+        }
     }
 
     public void l(String s) {
@@ -56,11 +60,12 @@ public class EventCatcher  {
         Object oldValue;
         ArrayAdapter adapter;
         BeanBinder beanBinder;
-        public Button2AdapterViewUpdater(View baseView, AdapterView adapterView, Pivot pivot, BeanBinder beanBinder){
+
+        public Button2AdapterViewUpdater(View baseView, AdapterView adapterView, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
             this.beanBinder = beanBinder;
-            if( adapterView.getAdapter() instanceof ArrayAdapter) {
-                adapter = (ArrayAdapter)adapterView.getAdapter();
+            if (adapterView.getAdapter() instanceof ArrayAdapter) {
+                adapter = (ArrayAdapter) adapterView.getAdapter();
             } else {
                 throw new IllegalArgumentException("Adapter for adapterView must be and ArrayAdapter!");
             }
@@ -68,7 +73,7 @@ public class EventCatcher  {
             oldValue = beanBinder.get(pivot.beanField);
             GUI_utils.setAdapterViewSelectedItem(adapterView, oldValue);
 
-            Button button = (Button)baseView.findViewById(ResourceUtils.getResId("id", pivot.bindTriggeringWidgetId));
+            Button button = (Button) baseView.findViewById(ResourceUtils.getResId("id", pivot.bindTriggeringWidgetId));
 
             MultiListenerUtils.MultiOnClickListener.setListener(button, this);
         }
@@ -81,18 +86,17 @@ public class EventCatcher  {
     }
 
 
-
-    public class Button2TextViewCatcher  implements Button.OnClickListener {
+    public class Button2TextViewCatcher implements Button.OnClickListener {
         Pivot pivot;
         CharSequence oldValue;
         TextView textView;
 
-        public Button2TextViewCatcher(View baseView, TextView textView, Pivot pivot, BeanBinder beanBinder){
+        public Button2TextViewCatcher(View baseView, TextView textView, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
             this.textView = textView;
-            oldValue = (CharSequence)beanBinder.get(pivot.beanField);
+            oldValue = (CharSequence) beanBinder.get(pivot.beanField);
 
-            Button button = (Button)baseView.findViewById(ResourceUtils.getResId("id", pivot.bindTriggeringWidgetId));
+            Button button = (Button) baseView.findViewById(ResourceUtils.getResId("id", pivot.bindTriggeringWidgetId));
 
             MultiListenerUtils.MultiOnClickListener.setListener(button, this, 0);
         }
@@ -100,7 +104,7 @@ public class EventCatcher  {
         @Override
         public void onClick(View v) {
             CharSequence newValue = textView.getText();
-            if(!oldValue.equals(newValue)) {
+            if (!oldValue.equals(newValue)) {
                 sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
                 oldValue = newValue;
             }
@@ -112,13 +116,13 @@ public class EventCatcher  {
         Pivot pivot;
         CharSequence oldValue;
 
-        public TextViewCatcher(TextView textView, Pivot pivot, BeanBinder beanBinder){
+        public TextViewCatcher(TextView textView, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
-            oldValue = (CharSequence)beanBinder.get(pivot.beanField);
+            oldValue = (CharSequence) beanBinder.get(pivot.beanField);
 
-            if(oldValue instanceof Spannable) {
+            if (oldValue instanceof Spannable) {
                 textView.setText(oldValue, TextView.BufferType.SPANNABLE);
-            } else if(oldValue instanceof Editable) {
+            } else if (oldValue instanceof Editable) {
                 textView.setText(oldValue, TextView.BufferType.EDITABLE);
             } else {
                 textView.setText(oldValue);
@@ -133,7 +137,7 @@ public class EventCatcher  {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String newValue = s.toString();
-            if(!oldValue.equals(newValue)) {
+            if (pivot.isForceUpdate() || !oldValue.equals(newValue)) {
                 sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
                 oldValue = newValue;
             }
@@ -146,7 +150,7 @@ public class EventCatcher  {
 
     public void catchTextView(View baseView, TextView textView, Pivot pivot, BeanBinder beanBinder) {
 
-        if(pivot.hasOtherTrigger()) {
+        if (pivot.hasOtherTrigger()) {
             // TODO we only support buttons as other trigger now
             new Button2TextViewCatcher(baseView, textView, pivot, beanBinder);
 
@@ -167,7 +171,7 @@ public class EventCatcher  {
         Pivot pivot;
         Object oldValue;
 
-        public AdapterViewCatcher(AdapterView adapterView, Pivot pivot, BeanBinder beanBinder){
+        public AdapterViewCatcher(AdapterView adapterView, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
             oldValue = beanBinder.get(pivot.beanField);
             GUI_utils.setAdapterViewSelectedItem(adapterView, oldValue);
@@ -178,7 +182,7 @@ public class EventCatcher  {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Object newValue = parent.getAdapter().getItem(position);
-            if(!oldValue.equals(newValue)) {
+            if (!oldValue.equals(newValue)) {
                 sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
                 oldValue = newValue;
             }
@@ -196,14 +200,14 @@ public class EventCatcher  {
 
         public CalendarViewCatcher(CalendarView calendarView, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
-            oldValue = (long)beanBinder.get(pivot.beanField);
+            oldValue = (long) beanBinder.get(pivot.beanField);
             calendarView.setDate(oldValue);
             calendarView.setOnDateChangeListener(this);
         }
 
         @Override
         public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-            if(oldValue != view.getDate()) {
+            if (oldValue != view.getDate()) {
                 sendEvent(new WidgetEventInfo(oldValue, view.getDate(), pivot));
                 oldValue = view.getDate();
             }
@@ -220,13 +224,14 @@ public class EventCatcher  {
 
         public CompoundButtonCatcher(CompoundButton compoundButton, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
-            oldValue = (boolean)beanBinder.get(pivot.beanField);
+            oldValue = (boolean) beanBinder.get(pivot.beanField);
             compoundButton.setChecked(oldValue);
             compoundButton.setOnCheckedChangeListener(this);
         }
+
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(oldValue != isChecked) {
+            if (oldValue != isChecked) {
                 sendEvent(new WidgetEventInfo(oldValue, isChecked, pivot));
                 oldValue = isChecked;
             }
@@ -234,7 +239,7 @@ public class EventCatcher  {
     }
 
     // radio buttons and checkboxes
-    public void catchCompoundButton(CompoundButton compoundButton , Pivot pivot, BeanBinder beanBinder) {
+    public void catchCompoundButton(CompoundButton compoundButton, Pivot pivot, BeanBinder beanBinder) {
         new CompoundButtonCatcher(compoundButton, pivot, beanBinder);
     }
 
@@ -245,7 +250,7 @@ public class EventCatcher  {
 
         public RadioGroupCatcher(RadioGroup radioGroup, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
-            oldValue = (int)beanBinder.get(pivot.beanField);
+            oldValue = (int) beanBinder.get(pivot.beanField);
             radioGroup.setId(oldValue);
             radioGroup.setOnCheckedChangeListener(this);
         }
@@ -268,7 +273,7 @@ public class EventCatcher  {
 
         public DatePickerCatcher(DatePicker datePicker, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
-            long oldValue = (long)beanBinder.get(pivot.beanField);
+            long oldValue = (long) beanBinder.get(pivot.beanField);
             oldCalendar.setTime(new Date(oldValue));
             datePicker.init(oldCalendar.get(Calendar.YEAR), oldCalendar.get(Calendar.MONTH), oldCalendar.get(Calendar.DAY_OF_MONTH), this);
         }
@@ -287,7 +292,7 @@ public class EventCatcher  {
     }
 
     public void catchAdapterView(View baseView, AdapterView adapterView, Pivot pivot, BeanBinder beanBinder) {
-        if(pivot.hasOtherTrigger()) {
+        if (pivot.hasOtherTrigger()) {
             new Button2AdapterViewUpdater(baseView, adapterView, pivot, beanBinder);
         } else {
             new AdapterViewCatcher(adapterView, pivot, beanBinder);
@@ -295,19 +300,33 @@ public class EventCatcher  {
     }
 
     public void setImageView(ImageView imageView, Pivot pivot, BeanBinder beanBinder) {
-        imageView.setImageResource(ResourceUtils.getResId("drawable", (String)beanBinder.get(pivot.beanField)));
+        imageView.setImageResource(ResourceUtils.getResId("drawable", (String) beanBinder.get(pivot.beanField)));
     }
 
     public void setTextView(TextView textView, Pivot pivot, BeanBinder beanBinder) {
-        textView.setText((String)beanBinder.get(pivot.beanField));
+        textView.setText((String) beanBinder.get(pivot.beanField));
     }
 
+    public void updateWidgetGroup(PivotGroup pivotGroup, Object value, View view) {
+        if(pivotGroup != null) {
+            Map<String, Pivot> pivots = pivotGroup.getPivots();
+            for (String k : pivots.keySet()) {
+                updateWidget(pivots.get(k), value, pivotGroup.getView(view));
+            }
+        }
+    }
+
+    public void updateWidget(Pivot pivot, Object value, View view) {
+        updateWidget(pivot.widgetId, value, view);
+    }
 
     public void updateWidget(String componentId, Object value, View view) {
 
         View widget = view.findViewById(ResourceUtils.getResId("id", componentId));
 
         if (widget != null) {
+            suppressEvents = true;
+
             if (widget instanceof TextView) {
                 ((TextView) widget).setText((CharSequence) value);
             } else if (widget instanceof DatePicker) {
@@ -320,8 +339,11 @@ public class EventCatcher  {
             } else if (widget instanceof RadioGroup) {
                 ((RadioGroup) widget).check((int) value);
             } else if (widget instanceof AdapterView) {
-                GUI_utils.setAdapterViewSelectedItem((AdapterView)widget, value);
+                GUI_utils.setAdapterViewSelectedItem((AdapterView) widget, value);
             }
+
+            suppressEvents = false;
+
         }
     }
 
@@ -355,23 +377,23 @@ public class EventCatcher  {
 
         Map<String, Pivot> pivots = twoWayMapper.getPivots();
 
-        for(String beanKey: pivots.keySet()) {
+        for (String beanKey : pivots.keySet()) {
             Pivot pivot = pivots.get(beanKey);
 
-            if(pivot.matches(beanBinder)) {
+            if (pivot.matches(beanBinder)) {
 
                 l("setall pivot: " + pivot);
-                View view = fragmentView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+                View widget = fragmentView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
 
-                if( view == null ) {
-                    if(!pivot.isWidgetConnected()) {
-                        view = rootView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
-                        catchWidget(rootView, view, pivot, beanBinder);
+                if (widget == null) {
+                    if (rootView != null && !pivot.isWidgetConnected()) {
+                        widget = rootView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+                        catchWidget(rootView, widget, pivot, beanBinder);
                     } else {
                         continue;   // global widget already connected
                     }
                 } else {
-                    catchWidget(fragmentView, view, pivot, beanBinder);
+                    catchWidget(fragmentView, widget, pivot, beanBinder);
                 }
 
                 pivot.setWidgetConnected(true);
@@ -380,8 +402,37 @@ public class EventCatcher  {
 
     }
 
+    public void setAll(Step step, View rootView, View fragmentView) {
+        TwoWayMapper twoWayMapper = step.twoWayMapper;
+
+        Map<String, Pivot> pivots = twoWayMapper.getPivots();
+
+        for (String beanKey : pivots.keySet()) {
+            Pivot pivot = pivots.get(beanKey);
+
+            BeanBinder beanBinder = bindEngine.getBeanBinder(pivot);
 
 
+            l("setall pivot: " + pivot);
+            View widget = fragmentView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+
+            if (widget == null) {
+                if (rootView != null && !pivot.isWidgetConnected()) {
+                    widget = rootView.findViewById(ResourceUtils.getResId("id", pivot.widgetId));
+                    catchWidget(rootView, widget, pivot, beanBinder);
+                } else {
+                    continue;   // global widget already connected
+                }
+            } else {
+                catchWidget(fragmentView, widget, pivot, beanBinder);
+            }
+
+            pivot.setWidgetConnected(true);
+
+        }
+    }
+
+/*
     private static EventCatcher inst = null;
 
     public static EventCatcher inst(BindEngine bindEngine) {
@@ -390,5 +441,5 @@ public class EventCatcher  {
         }
         return inst;
     }
-
+*/
 }

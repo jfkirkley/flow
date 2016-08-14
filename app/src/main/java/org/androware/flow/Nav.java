@@ -27,6 +27,8 @@ public class Nav {
     public String anim_in;
     public String anim_out;
 
+    private Map props;
+
     public static final String ROOT_VIEW = "__ROOT_VIEW__";
 
     public static final String GEN_NEXT = "__NEXT__";
@@ -97,6 +99,14 @@ public class Nav {
         return useStepGenerator;
     }
 
+    public Map getProps() {
+        return props;
+    }
+
+    public void setProps(Map props) {
+        this.props = props;
+    }
+
 
     public void setTarget(String target) {
         if (this.target == null || !SPECIAL_NAV_TARGETS.contains(this.target)) {
@@ -131,7 +141,7 @@ public class Nav {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            activity.loadStep(thisNav);
+                            activity.loadStep(thisNav, thisNav.getProps());
                         }
                     });
 

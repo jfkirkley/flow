@@ -1,16 +1,6 @@
 package org.androware.flow;
 
-import org.androware.androbeans.ObjectReadException;
-import org.androware.androbeans.ObjectReaderFactory;
-import org.androware.androbeans.utils.ReflectionUtils;
-import org.androware.androbeans.utils.Utils;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import static org.androware.flow.JsonObjectLoader.EXT_FILE_PATH;
-import static org.androware.flow.JsonObjectLoader.OBJECT_CLASSNAME;
-import static org.androware.flow.JsonObjectLoader.RAW_RESOURCE_NAME;
+import org.androware.flow.binding.BeanBinder;
 
 /**
  * Created by jkirkley on 7/4/16.
@@ -20,14 +10,25 @@ import static org.androware.flow.JsonObjectLoader.RAW_RESOURCE_NAME;
 /*
 TODO:  Need inter-relation system to spawn app templates from UML style specs
  */
-public class CachedObjectLoader implements ObjectLoader {
+public class  CachedObjectLoader implements ObjectLoader {
 
     public static final String CACHED_OBJECT_NAME = "cachedObjectName";
 
     public CachedObjectLoader() {}
 
     @Override
-    public Object load(ObjectLoaderSpec spec, Step step) {
-        return step.getFlow().getBoundObject(spec.objectId);
+    public Object load(ObjectLoaderSpec spec, Flow flow, Step step) {
+
+        BeanBinder beanBinder = (BeanBinder)step.getFlow().getBoundObject(spec.objectId);
+
+        if(beanBinder != null) {
+            Boolean setStep = (Boolean) spec.getProp("setStep");
+
+            if (setStep != null && setStep) {
+                beanBinder.setStep(step);
+            }
+        }
+
+        return beanBinder;
     }
 }

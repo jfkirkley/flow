@@ -13,7 +13,7 @@ public class ExternalJsonFileObjectSaver extends JsonObjectSaver {
     @Override
     public void save(ObjectSaverSpec objectSaverSpec, Object target) {
 
-        String fileName = (String)ReflectionUtils.checkNullGet(objectSaverSpec, "properties", "ext_file_name");
+        String fileName = (String) ReflectionUtils.checkNullGet(objectSaverSpec, "properties", "ext_file_name");
 
         objectSaverSpec.addProp(EXT_FILE_PATH, fileName);
 

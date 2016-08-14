@@ -27,6 +27,7 @@ import org.androware.androbeans.utils.Utils;
 public class FlowContainerActivity extends FragmentActivity {
 
     HashMap<String, Stack<Step>> container2StepStackMap;
+
     protected Stack<Step> stepStack;
     HashMap<String, StepFragment> stepFragmentCache;
     Stack<Class> activityClassStack;
@@ -258,6 +259,10 @@ public class FlowContainerActivity extends FragmentActivity {
     protected void onRestart() {
         //l("onRestart &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ");
         super.onRestart();
+
+        // force bindings to update
+        flow.getBindEngine().invalidateAll();
+
         justRestarted = true;
 
     }
@@ -267,7 +272,7 @@ public class FlowContainerActivity extends FragmentActivity {
         //l("onResume ======================================== ");
         super.onResume();
         if(justRestarted) {
-            JsonFlowEngine.inst().setCurrFlow(flow);
+            JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
             popStep();
             justRestarted = false;
         }
@@ -308,6 +313,10 @@ public class FlowContainerActivity extends FragmentActivity {
 
     public Flow getFlow() {
         return flow;
+    }
+
+    public Stack<Step> getStepStack() {
+        return stepStack;
     }
 
 }

@@ -21,7 +21,7 @@ public class JsonObjectLoader implements ObjectLoader {
     public JsonObjectLoader() {}
 
     @Override
-    public Object load(ObjectLoaderSpec spec, Step step) {
+    public Object load(ObjectLoaderSpec spec, Flow flow, Step step) {
         String objectClassName = spec.objectClassName;
 
         if (objectClassName != null) {
@@ -70,9 +70,8 @@ public class JsonObjectLoader implements ObjectLoader {
                 object = ReflectionUtils.newInstance(objectClass);
             }
 
-            BeanBinder beanBinder = new BeanBinder(object, spec.objectId, step);
-            step.getFlow().setBoundObject(beanBinder.getBeanId(), beanBinder);
-
+            BeanBinder beanBinder = new BeanBinder(object, spec.objectId, spec.alias, flow.getBindEngine());
+            flow.setBoundObject(beanBinder);
 
             return beanBinder;
         }

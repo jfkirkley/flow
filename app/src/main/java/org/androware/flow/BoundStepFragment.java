@@ -1,7 +1,6 @@
 package org.androware.flow;
 
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +14,15 @@ import android.widget.TextView;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.EventCatcher;
+import org.androware.flow.binding.Pivot;
 import org.androware.flow.binding.TwoWayMapper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+
+import static android.R.attr.value;
 
 
 /**
@@ -33,7 +36,7 @@ public class BoundStepFragment extends StepFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+         View view = super.onCreateView(inflater, container, savedInstanceState);
 
 
         if (binderList == null) {
@@ -41,22 +44,23 @@ public class BoundStepFragment extends StepFragment {
             Object boundBeanObject = step.getBoundBeanObject();
 
             if (boundBeanObject instanceof List) {
-                binderList = (List) boundBeanObject;
+                 binderList = (List) boundBeanObject;
             } else {
                 binderList = new ArrayList<>();
                 binderList.add((BeanBinder) boundBeanObject);
             }
 
-            // need the root view, as some components are higher in the hierarchy than the current fragment
-            final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.getActivity().findViewById(android.R.id.content)).getChildAt(0);
-
-            for (BeanBinder beanBinder : binderList) {
-                EventCatcher.inst(step.getFlow().getBindEngine()).setAll(step, beanBinder, viewGroup, view);
-            }
 
         } else {
 
             needsUpdate = true;
+        }
+
+        // need the root view, as some components are higher in the hierarchy than the current fragment
+        final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.getActivity().findViewById(android.R.id.content)).getChildAt(0);
+
+        for (BeanBinder beanBinder : binderList) {
+            step.getFlow().getBindEngine().getEventCatcher().setAll(step, beanBinder, viewGroup, view);
         }
 
         return view;
@@ -69,13 +73,40 @@ public class BoundStepFragment extends StepFragment {
 
         if (needsUpdate) {
 
-            TwoWayMapper twoWayMapper = step.twoWayMapper;
+            View view = getView();
 
-            for (BeanBinder beanBinder : binderList) {
-                twoWayMapper.refresh(beanBinder);
+            if (view != null) {
+                TwoWayMapper twoWayMapper = step.twoWayMapper;
+                EventCatcher eventCatcher = step.getFlow().getBindEngine().getEventCatcher();
+                if (true) {
+
+                    for (BeanBinder beanBinder : binderList) {
+                        twoWayMapper.refresh(beanBinder);
+                        eventCatcher.updateWidgetGroup(beanBinder.getPivotGroup(), value, view);
+                    }
+
+                } else {
+
+                    // TODO more to the point
+                    Map<String, Pivot> pivots = twoWayMapper.getPivots();
+
+                    for (BeanBinder beanBinder : binderList) {
+
+                        eventCatcher.updateWidgetGroup(beanBinder.getPivotGroup(), value, view);
+
+                        for (String beanKey : pivots.keySet()) {
+                            Pivot pivot = pivots.get(beanKey);
+                            if (pivot.matches(beanBinder)) {
+                                eventCatcher.updateWidget(pivot, value, view);
+                            }
+                        }
+                    }
+
+
+                }
+
+                needsUpdate = false;
             }
-
-            needsUpdate = false;
         }
     }
 
@@ -85,7 +116,7 @@ public class BoundStepFragment extends StepFragment {
 
         if (view != null) {
 
-            EventCatcher.inst(null).updateWidget(componentId, value, view);
+            step.getFlow().getBindEngine().getEventCatcher().updateWidget(componentId, value, view);
 
         } else {
 
@@ -93,6 +124,17 @@ public class BoundStepFragment extends StepFragment {
             needsUpdate = true;
         }
 
+    }
+
+    public void invalidate() {
+        needsUpdate = true;
+    }
+
+    public void addBeanBinder(BeanBinder beanBinder) {
+        for (BeanBinder b : binderList) {
+            //if(b)
+        }
+        binderList.add(beanBinder);
     }
 
 

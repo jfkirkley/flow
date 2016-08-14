@@ -13,13 +13,13 @@ import org.androware.flow.Step;
 public class ExternalJsonFileObjectLoader extends JsonObjectLoader {
 
     @Override
-    public Object load(ObjectLoaderSpec objectLoaderSpec, Step step) {
+    public Object load(ObjectLoaderSpec objectLoaderSpec, Flow flow, Step step) {
 
         String fileName = (String) ReflectionUtils.checkNullGet(objectLoaderSpec, "properties", "ext_file_name");
 
         objectLoaderSpec.addProp(EXT_FILE_PATH, fileName);
 
-        return super.load(objectLoaderSpec, step);
+        return super.load(objectLoaderSpec, flow, step);
     }
 
 }

@@ -2,9 +2,14 @@ package org.androware.flow;
 
 import android.util.Log;
 import java.util.HashMap;
+import java.util.TreeMap;
+
 import org.androware.androbeans.utils.ConstructorSpec;
+import org.androware.androbeans.utils.StringNameAndAliasComparable;
 import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.BindEngine;
+
+import static android.R.attr.name;
 
 
 /**
@@ -17,24 +22,33 @@ public class Flow  {
     public String layout;
     public String processor;
 
+    public ObjectLoaderSpec objectLoaderSpec;
+
     BindEngine bindEngine = new BindEngine();
 
-    private HashMap<String, Object> boundObjects =new HashMap<>();
 
-    public void setBoundObject(String name, Object object) {
-        if(name != null) {
-            // some beans may not supply an id to avoid being cached
-            boundObjects.put(name, object);
+    public void setBoundObject(BeanBinder beanBinder) {
+        setBoundObject(beanBinder, false);
+    }
 
-            if (object instanceof BeanBinder) {
-                bindEngine.addBeanBinder(name, (BeanBinder) object);
-            }
+    public void setBoundObject(BeanBinder beanBinder, boolean setGlobal) {
+
+        bindEngine.addBeanBinder((BeanBinder) beanBinder);
+
+        if(setGlobal) {
+            JsonFlowEngine.inst().addGlobalBeanBinder((BeanBinder) beanBinder);
         }
     }
 
     public Object getBoundObject(String name) {
-        return boundObjects.get(name);
+        return bindEngine.getBeanBinder(name);
     }
+
+/*
+    public Object getBoundObject(String name, String alias) {
+        return bindEngine.getBeanBinder(name, alias);
+    }
+*/
 
     public ConstructorSpec stepGeneratorSpec;
 
@@ -109,8 +123,16 @@ public class Flow  {
         return startNav;
     }
 
+    public void loadBoundObject(String phase, Step step) {
+        if(objectLoaderSpec != null && objectLoaderSpec.isWhen(phase) ) {
+            objectLoaderSpec.buildAndLoad(this, step);
+        }
+    }
+
 
     public void __init__() {
+        loadBoundObject(ObjectLoaderSpec.ON_FLOW_INIT, null);
+
         for(String k: steps.keySet()) {
             Step step = steps.get(k);
             step.setFlow(this);

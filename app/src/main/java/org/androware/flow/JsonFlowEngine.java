@@ -6,12 +6,16 @@ import android.app.Activity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.androware.androbeans.JsonObjectReader;
 import org.androware.androbeans.LinkObjectReadListener;
 import org.androware.androbeans.ObjectReadException;
 import org.androware.androbeans.utils.ResourceUtils;
+import org.androware.androbeans.utils.StringNameAndAliasComparable;
 import org.androware.androbeans.utils.Utils;
+import org.androware.flow.binding.BeanBinder;
 
 
 /**
@@ -21,8 +25,12 @@ public class JsonFlowEngine {
 
     static JsonFlowEngine jsonFlowEngine = null;
 
+    //private TreeMap<StringNameAndAliasComparable, BeanBinder> globalBeanBinderMap = new TreeMap<>();
+
+    private TreeMap<String, BeanBinder> globalBeanBinderMap = new TreeMap<>();
 
     private FlowContainerActivity currentFlowContainerActivity;
+
 
     public Flow getCurrFlow() {
         return currFlow;
@@ -31,7 +39,6 @@ public class JsonFlowEngine {
     Flow currFlow;
 
     Activity activity;
-
 
     public JsonFlowEngine(Activity activity) {
         this.activity = activity;
@@ -89,10 +96,34 @@ public class JsonFlowEngine {
 
     public void setCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity) {
         this.currentFlowContainerActivity = currentFlowContainerActivity;
+        currFlow = currentFlowContainerActivity.getFlow();
     }
 
     public void resumeCurrentFlow() {
         Utils.raiseToForegroundActivity(currentFlowContainerActivity.getClass(), this.activity);
     }
 
+    public void addGlobalBeanBinder(BeanBinder beanBinder) {
+        globalBeanBinderMap.put(beanBinder.getBeanId(), beanBinder);
+        addGlobalBeanBinderByAlias(beanBinder);
+    }
+
+    public void addGlobalBeanBinderByAlias(BeanBinder beanBinder) {
+        if(beanBinder.getAlias() != null){
+            globalBeanBinderMap.put(beanBinder.getAlias(), beanBinder);
+        }
+    }
+
+    public BeanBinder getGlobalBeanBinder(String beanBinderId) {
+        return globalBeanBinderMap.get(beanBinderId);
+    }
+/*
+    public BeanBinder getGlobalBeanBinder(String beanBinderId) {
+        return getGlobalBeanBinder(new StringNameAndAliasComparable(beanBinderId));
+    }
+
+    public BeanBinder getGlobalBeanBinder(String beanBinderId, String alias) {
+        return getGlobalBeanBinder(new StringNameAndAliasComparable(beanBinderId, alias));
+    }
+*/
 }

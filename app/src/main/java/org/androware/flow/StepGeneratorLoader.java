@@ -9,8 +9,8 @@ import org.androware.flow.binding.BeanBinder;
 public class StepGeneratorLoader implements ObjectLoader {
 
     @Override
-    public Object load(ObjectLoaderSpec spec, Step step) {
-        return new BeanBinder(step.getFlow().stepGenerator, spec.objectId, step);
+    public Object load(ObjectLoaderSpec spec, Flow flow, Step step) {
+        return new BeanBinder(step.getFlow().stepGenerator, spec.objectId, flow.getBindEngine());
     }
 
 }

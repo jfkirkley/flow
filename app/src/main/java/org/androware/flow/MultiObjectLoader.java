@@ -14,7 +14,7 @@ public class MultiObjectLoader implements ObjectLoader {
 
     public final static String LOADER_CLASSES = "loaderClasses";
     @Override
-    public Object load(ObjectLoaderSpec spec, Step step) {
+    public Object load(ObjectLoaderSpec spec, Flow flow, Step step) {
 
         Map properties = spec.properties;
         if (properties != null && properties.containsKey(LOADER_CLASSES)) {
@@ -28,11 +28,12 @@ public class MultiObjectLoader implements ObjectLoader {
                 Map classLoadData = (Map)loaderClassesMap.get(k);
                 String loaderClassName = (String) classLoadData.get("loaderClass");
                 String objectClassName = (String) classLoadData.get("objectClass");
+                String alias = (String) classLoadData.get("alias");
                 Map<String, Object> props = (Map) classLoadData.get("properties");
 
-                ObjectLoaderSpec objectLoaderSpec = new ObjectLoaderSpec(loaderClassName, objectClassName, beanId, props);
+                ObjectLoaderSpec objectLoaderSpec = new ObjectLoaderSpec(loaderClassName, objectClassName, beanId, props, alias);
 
-                binderList.add((BeanBinder)objectLoaderSpec.buildAndLoad(step));
+                binderList.add((BeanBinder)objectLoaderSpec.buildAndLoad(flow, step));
             }
 
             return binderList;

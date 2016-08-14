@@ -136,12 +136,12 @@ public class Step {
     }
 
     public void postInit() {
-        loadBoundObject();
+        loadBoundObject(ObjectLoaderSpec.ON_FLOW_INIT);
     }
 
-    public void loadBoundObject() {
-        if(objectLoaderSpec != null) {
-            boundBeanObject = objectLoaderSpec.buildAndLoad(this);
+    public void loadBoundObject(String phase) {
+        if(objectLoaderSpec != null && objectLoaderSpec.isWhen(phase) ) {
+            boundBeanObject = objectLoaderSpec.buildAndLoad(flow, this);
         }
     }
 
@@ -179,11 +179,15 @@ public class Step {
     }
 
     public void preTransition(TransitionActor actor) {
+        loadBoundObject(ObjectLoaderSpec.ON_PRE_PRE_STEP_TRANS);
         stepTransition.preTransition(this, actor);
+        loadBoundObject(ObjectLoaderSpec.ON_POST_PRE_STEP_TRANS);
     }
 
     public void postTransition(TransitionActor actor) {
+        loadBoundObject(ObjectLoaderSpec.ON_PRE_POST_STEP_TRANS);
         stepTransition.postTransition(this, actor);
+        loadBoundObject(ObjectLoaderSpec.ON_POST_POST_STEP_TRANS);
     }
 
     public void stop() {
@@ -280,7 +284,7 @@ public class Step {
 
     public Object getBoundBeanObject() {
         if(boundBeanObject == null) {
-            loadBoundObject();
+            loadBoundObject(ObjectLoaderSpec.ON_DEMAND);
         }
         return boundBeanObject;
     }

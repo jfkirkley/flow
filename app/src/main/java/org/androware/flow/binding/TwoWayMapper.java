@@ -64,4 +64,8 @@ public class TwoWayMapper {
         return pivots;
     }
 
+    public void addPivot(Pivot pivot) {
+        pivots.put(pivot.getKey(), pivot);
+    }
+
 }

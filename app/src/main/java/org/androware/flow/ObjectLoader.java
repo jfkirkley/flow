@@ -6,5 +6,5 @@ package org.androware.flow;
 
 public interface ObjectLoader {
 
-    public Object load(ObjectLoaderSpec spec, Step step);
+    public Object load(ObjectLoaderSpec spec, Flow flow, Step step);
 }
