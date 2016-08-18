@@ -1,8 +1,6 @@
-package org.androware.flow;
-
+package org.androware.flow.base;
 
 import org.androware.androbeans.utils.ConstructorSpec;
-import org.androware.androbeans.utils.ResourceUtils;
 
 import java.util.List;
 
@@ -51,10 +49,6 @@ public class AdapterViewSpec {
         }
 
         return items;
-    }
-
-    public int getItemLayoutId() {
-        return ResourceUtils.getResId("layout", itemLayoutId);
     }
 
 }

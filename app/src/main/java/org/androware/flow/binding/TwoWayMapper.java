@@ -2,6 +2,7 @@ package org.androware.flow.binding;
 
 import org.androware.flow.BoundStepFragment;
 import org.androware.flow.Step;
+import org.androware.flow.base.TwoWayMapperBase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,14 +11,18 @@ import java.util.Map;
  * Created by jkirkley on 7/6/16.
  */
 
-public class TwoWayMapper {
+public class TwoWayMapper extends TwoWayMapperBase {
 
 
     Step step;
 
-    public HashMap<String, String> componentId2BeanFieldMap;
-
     protected Map<String, Pivot> pivots;
+    public TwoWayMapper() {
+
+    }
+    public TwoWayMapper(TwoWayMapper otherTwoWayMapper) {
+        this.pivots = otherTwoWayMapper.getPivots();
+    }
 
     public void __init__() {
         pivots = new HashMap<>();
@@ -28,7 +33,7 @@ public class TwoWayMapper {
         }
     }
 
-    public void update(Pivot pivot, Object newValue) {
+    public void  update(Pivot pivot, Object newValue) {
 
         BoundStepFragment stepFragment = (BoundStepFragment)step.getStepFragment();
         if(stepFragment != null) {

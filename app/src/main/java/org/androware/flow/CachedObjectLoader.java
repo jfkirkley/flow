@@ -1,6 +1,9 @@
 package org.androware.flow;
 
+import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.flow.binding.BeanBinder;
+import org.androware.flow.binding.ObjectLoader;
+import org.androware.flow.binding.ObjectLoaderSpec;
 
 /**
  * Created by jkirkley on 7/4/16.
@@ -19,7 +22,7 @@ public class  CachedObjectLoader implements ObjectLoader {
     @Override
     public Object load(ObjectLoaderSpec spec, Flow flow, Step step) {
 
-        BeanBinder beanBinder = (BeanBinder)step.getFlow().getBoundObject(spec.objectId);
+        BeanBinder beanBinder = (BeanBinder)flow.getBoundObject(spec.objectId);
 
         if(beanBinder != null) {
             Boolean setStep = (Boolean) spec.getProp("setStep");
@@ -27,7 +30,11 @@ public class  CachedObjectLoader implements ObjectLoader {
             if (setStep != null && setStep) {
                 beanBinder.setStep(step);
             }
-        }
+        } else if( spec.autoCreate ) {
+            Object bean = ReflectionUtils.newInstance(spec.objectClassName);
+            beanBinder = new BeanBinder(bean, spec.objectId, flow.getBindEngine(), step);
+            flow.setBoundObject(beanBinder, true);
+         }
 
         return beanBinder;
     }

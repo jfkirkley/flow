@@ -1,6 +1,8 @@
 package org.androware.flow;
 
 import org.androware.flow.binding.BeanBinder;
+import org.androware.flow.binding.ObjectLoader;
+import org.androware.flow.binding.ObjectLoaderSpec;
 
 /**
  * Created by jkirkley on 7/13/16.

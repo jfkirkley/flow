@@ -17,30 +17,25 @@ import org.androware.androbeans.ObjectReadException;
 import org.androware.androbeans.ObjectReaderFactory;
 import org.androware.androbeans.utils.ConstructorSpec;
 import org.androware.androbeans.utils.ReflectionUtils;
+import org.androware.flow.base.ObjectLoaderSpecBase;
+import org.androware.flow.base.StepBase;
+import org.androware.flow.binding.BeanBinder;
+import org.androware.flow.binding.ObjectLoaderSpec;
+import org.androware.flow.binding.ObjectSaverSpec;
 import org.androware.flow.binding.TwoWayMapper;
 
 
 /**
  * Created by jkirkley on 5/7/16.
  */
-public class Step {
+public class Step extends StepBase {
 
     public static final int MAX_PARAMS = 1024;
+    String name;
 
     private Flow flow;
 
-    private Object boundBeanObject;
-    public String layout;
-    public String processor = StepFragment.class.getName();
-    public String parentContainer;
-    public String transitionClassName;
-
-    public TwoWayMapper twoWayMapper;
-    public ObjectLoaderSpec objectLoaderSpec;
-    public ObjectSaverSpec objectSaverSpec;
-
-    public String targetFlow;
-    public UI ui;
+    private Map<String, BeanBinder> beanBinderMap = new HashMap<>();
 
     private int previousParamStackEndPoint = -1;
 
@@ -74,8 +69,6 @@ public class Step {
         }
     }
 
-    public ConstructorSpec viewCustomizerSpec;
-
     public ViewCustomizer getViewCustomizer() {
         return viewCustomizer;
     }
@@ -88,14 +81,7 @@ public class Step {
 
     private Nav currNav;
 
-    public HashMap<String, String> meta;
-    public HashMap<String, String> data;
-
-    public HashMap<String, Nav> navMap;
-
     private Stack<Object> paramStack = new Stack<>();
-
-    String name;
 
     public String getName() {
         return name;
@@ -136,12 +122,21 @@ public class Step {
     }
 
     public void postInit() {
-        loadBoundObject(ObjectLoaderSpec.ON_FLOW_INIT);
+        if (twoWayMapper != null) {
+            ((TwoWayMapper)twoWayMapper).setStep(this);
+        }
+        loadBoundObjects(ObjectLoaderSpecBase.ON_FLOW_INIT);
     }
 
-    public void loadBoundObject(String phase) {
-        if(objectLoaderSpec != null && objectLoaderSpec.isWhen(phase) ) {
-            boundBeanObject = objectLoaderSpec.buildAndLoad(flow, this);
+    public void loadBoundObjects(String phase) {
+        if(objectLoaderSpecs != null ) {
+            for(ObjectLoaderSpecBase objectLoaderSpecBase: objectLoaderSpecs) {
+                ObjectLoaderSpec objectLoaderSpec = (ObjectLoaderSpec) objectLoaderSpecBase;
+                if(objectLoaderSpec.isWhen(phase)) {
+                    BeanBinder beanBinder = (BeanBinder)objectLoaderSpec.buildAndLoad(flow, this);
+                    beanBinderMap.put(beanBinder.getBeanId(), beanBinder);
+                }
+            }
         }
     }
 
@@ -149,9 +144,6 @@ public class Step {
     public void __init__() {
         if (viewCustomizerSpec != null) {
             viewCustomizer = (ViewCustomizer) viewCustomizerSpec.build();
-        }
-        if (twoWayMapper != null) {
-            twoWayMapper.setStep(this);
         }
     }
 
@@ -172,22 +164,22 @@ public class Step {
 
         if (navMap != null) {
             for (String targetKey : navMap.keySet()) {
-                Nav nav = navMap.get(targetKey);
+                Nav nav = (Nav)navMap.get(targetKey);
                 nav.setNavHandler(view, activity, targetKey);
             }
         }
     }
 
     public void preTransition(TransitionActor actor) {
-        loadBoundObject(ObjectLoaderSpec.ON_PRE_PRE_STEP_TRANS);
+        loadBoundObjects(ObjectLoaderSpecBase.ON_PRE_PRE_STEP_TRANS);
         stepTransition.preTransition(this, actor);
-        loadBoundObject(ObjectLoaderSpec.ON_POST_PRE_STEP_TRANS);
+        loadBoundObjects(ObjectLoaderSpecBase.ON_POST_PRE_STEP_TRANS);
     }
 
     public void postTransition(TransitionActor actor) {
-        loadBoundObject(ObjectLoaderSpec.ON_PRE_POST_STEP_TRANS);
+        loadBoundObjects(ObjectLoaderSpecBase.ON_PRE_POST_STEP_TRANS);
         stepTransition.postTransition(this, actor);
-        loadBoundObject(ObjectLoaderSpec.ON_POST_POST_STEP_TRANS);
+        loadBoundObjects(ObjectLoaderSpecBase.ON_POST_POST_STEP_TRANS);
     }
 
     public void stop() {
@@ -282,11 +274,23 @@ public class Step {
         this.flow = flow;
     }
 
-    public Object getBoundBeanObject() {
-        if(boundBeanObject == null) {
-            loadBoundObject(ObjectLoaderSpec.ON_DEMAND);
+    public Map<String, BeanBinder> getBeanBinderMap() {
+        if(beanBinderMap == null) {
+            loadBoundObjects(ObjectLoaderSpecBase.ON_DEMAND);
         }
-        return boundBeanObject;
+        return beanBinderMap;
+    }
+
+    public BeanBinder getBeanBinder(String id) {
+        return beanBinderMap.get(id);
+    }
+
+    public TwoWayMapper getTwoWayMapper() {
+        return (TwoWayMapper)twoWayMapper;
+    }
+
+    public ObjectSaverSpec getObjectSaverSpec() {
+        return (ObjectSaverSpec)objectSaverSpec;
     }
 
 }

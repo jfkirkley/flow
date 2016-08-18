@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.MultiListenerUtils;
 import org.androware.androbeans.utils.ResourceUtils;
+import org.androware.flow.base.NavBase;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,13 +20,8 @@ import java.util.Set;
 /**
  * Created by jkirkley on 5/7/16.
  */
-public class Nav {
+public class Nav extends NavBase {
     public final static String TAG = "nav";
-
-    public String compName;
-    public String event;
-    public String anim_in;
-    public String anim_out;
 
     private Map props;
 
@@ -40,8 +36,6 @@ public class Nav {
         SPECIAL_NAV_TARGETS.add(GEN_NEXT);
         SPECIAL_NAV_TARGETS.add(GEN_PREV);
     }
-
-    public String target;
 
     public boolean isPrev() {
         if (target != null) {
@@ -64,8 +58,6 @@ public class Nav {
     public void setItems(List items) {
         this.items = items;
     }
-
-    public boolean useStepGenerator;
 
     List items;
 

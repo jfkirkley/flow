@@ -1,4 +1,6 @@
-package org.androware.flow;
+package org.androware.flow.binding;
+
+import org.androware.flow.binding.ObjectSaverSpec;
 
 /**
  * Created by jkirkley on 7/4/16.

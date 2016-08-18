@@ -1,31 +1,21 @@
 package org.androware.flow;
 
 import android.util.Log;
-import java.util.HashMap;
-import java.util.TreeMap;
 
-import org.androware.androbeans.utils.ConstructorSpec;
-import org.androware.androbeans.utils.StringNameAndAliasComparable;
+import org.androware.flow.base.FlowBase;
+import org.androware.flow.base.ObjectLoaderSpecBase;
 import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.BindEngine;
-
-import static android.R.attr.name;
+import org.androware.flow.binding.ObjectLoaderSpec;
+import org.androware.flow.binding.TwoWayMapper;
 
 
 /**
  * Created by jkirkley on 5/7/16.
  */
-public class Flow  {
-
-    public String fragmentContainer;
-    public HashMap<String, Step> steps;
-    public String layout;
-    public String processor;
-
-    public ObjectLoaderSpec objectLoaderSpec;
+public class Flow extends FlowBase {
 
     BindEngine bindEngine = new BindEngine();
-
 
     public void setBoundObject(BeanBinder beanBinder) {
         setBoundObject(beanBinder, false);
@@ -44,17 +34,8 @@ public class Flow  {
         return bindEngine.getBeanBinder(name);
     }
 
-/*
-    public Object getBoundObject(String name, String alias) {
-        return bindEngine.getBeanBinder(name, alias);
-    }
-*/
-
-    public ConstructorSpec stepGeneratorSpec;
 
     public StepGenerator stepGenerator;
-
-    public Nav startNav;    // navigates to the first step
 
     public Step generateStep(Nav nav) {
 
@@ -83,13 +64,12 @@ public class Flow  {
         return stepGenerator.getStep(nav.target);
     }
 
-
     public Step getFirstStep() {
-        return getStep(startNav);
+        return getStep((Nav)startNav);
     }
 
     public Step getStep(String name) {
-        return steps.get(name);
+        return (Step)steps.get(name);
     }
 
     public Step getStep(Nav nav) {
@@ -101,7 +81,7 @@ public class Flow  {
                 steps.put(step.getName(), step);
             }
         } else {
-            step = steps.get(nav.target);
+            step = (Step)steps.get(nav.target);
             step.setName(nav.target);
         }
         if(step != null) {
@@ -110,35 +90,38 @@ public class Flow  {
         return step;
     }
 
-
     public void l(String s) {
         Log.d(Constants.TAG, s);
     }
-
 
     public Flow() {
     }
 
     public Nav getStartNav() {
-        return startNav;
+        return (Nav)startNav;
     }
 
     public void loadBoundObject(String phase, Step step) {
-        if(objectLoaderSpec != null && objectLoaderSpec.isWhen(phase) ) {
-            objectLoaderSpec.buildAndLoad(this, step);
+        if(objectLoaderSpecs != null ) {
+            for(ObjectLoaderSpecBase objectLoaderSpecBase: objectLoaderSpecs) {
+                ObjectLoaderSpec objectLoaderSpec = (ObjectLoaderSpec) objectLoaderSpecBase;
+                if(objectLoaderSpec.isWhen(phase)) {
+                    objectLoaderSpec.buildAndLoad(this, step);
+                }
+            }
         }
     }
 
-
     public void __init__() {
-        loadBoundObject(ObjectLoaderSpec.ON_FLOW_INIT, null);
+        loadBoundObject(ObjectLoaderSpecBase.ON_FLOW_INIT, null);
 
         for(String k: steps.keySet()) {
-            Step step = steps.get(k);
+            Step step = (Step)steps.get(k);
+            step.setName(k);
             step.setFlow(this);
             step.setStepTransition(StepTransitionFactory.getInstance().makeStepTransition(step));
             if( step.twoWayMapper != null) {
-                bindEngine.addTwoWayMapper(step.twoWayMapper);
+                bindEngine.addTwoWayMapper((TwoWayMapper)step.twoWayMapper);
             }
         }
 
@@ -151,7 +134,7 @@ public class Flow  {
 
         // step post init
         for(String k: steps.keySet()) {
-            Step step = steps.get(k);
+            Step step = (Step)steps.get(k);
             step.postInit();
         }
 
@@ -160,6 +143,4 @@ public class Flow  {
     public BindEngine getBindEngine() {
         return bindEngine;
     }
-
-
 }

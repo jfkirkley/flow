@@ -8,9 +8,6 @@ import org.androware.flow.Step;
 
 import java.util.Map;
 
-import static android.R.attr.id;
-import static android.R.attr.stepSize;
-import static org.androware.androbeans.utils.ReflectionUtils.setField;
 
 
 /**

@@ -1,33 +1,19 @@
-package org.androware.flow;
+package org.androware.flow.binding;
 
 import org.androware.androbeans.utils.ReflectionUtils;
+import org.androware.flow.Flow;
+import org.androware.flow.Step;
+import org.androware.flow.base.ObjectLoaderSpecBase;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.R.attr.value;
-import static android.R.attr.y;
 
 /**
  * Created by jkirkley on 7/4/16.
  */
 
-public class ObjectLoaderSpec {
-    public final static String ON_FLOW_INIT = "onFlowInit";
-    public final static String ON_PRE_PRE_STEP_TRANS = "onPrePreStepTrans";
-    public final static String ON_POST_PRE_STEP_TRANS = "onPostPreStepTrans";
-    public final static String ON_PRE_POST_STEP_TRANS = "onPrePostStepTrans";
-    public final static String ON_POST_POST_STEP_TRANS = "onPostPostStepTrans";
-    public final static String ON_DEMAND = "onDemand";
-
-    public String objectLoaderClassName;
-    public String objectClassName;
-    public String objectId;
-    public String alias;
-
-    public String when = ON_FLOW_INIT;
-
-    public Map<String, Object> properties;
+public class ObjectLoaderSpec extends ObjectLoaderSpecBase {
 
     public ObjectLoaderSpec() {
     }

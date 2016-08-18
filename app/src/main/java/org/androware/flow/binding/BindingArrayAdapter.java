@@ -6,14 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 import org.androware.androbeans.utils.ResourceUtils;
-import org.androware.flow.AdapterViewSpec;
+import org.androware.flow.base.AdapterViewSpec;
 import org.androware.flow.Step;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -29,7 +27,7 @@ public class BindingArrayAdapter extends ArrayAdapter {
 
     AdapterViewSpec adapterViewSpec;
     public BindingArrayAdapter(Activity activity, List<Object> rowDataList, Step step, AdapterViewSpec adapterViewSpec) {
-        super(activity, adapterViewSpec.getItemLayoutId(), rowDataList);
+        super(activity, ResourceUtils.getResId("layout", adapterViewSpec.itemLayoutId), rowDataList);
         this.adapterViewSpec = adapterViewSpec;
         this.activity = activity;
         this.rowDataList = rowDataList;
@@ -50,12 +48,12 @@ public class BindingArrayAdapter extends ArrayAdapter {
 
         bindEngine.addBeanBinder(beanBinder);   // add with beanId
 
-        beanBinder.setPivotGroup(new PositionalPivotGroup(matchId, step.twoWayMapper.pivots, position));
+        beanBinder.setPivotGroup(new PositionalPivotGroup(matchId, step.getTwoWayMapper().pivots, position));
 
         LayoutInflater inflator = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         // inflating the row layout we defined earlier.
-        convertView = inflator.inflate(adapterViewSpec.getItemLayoutId(), null);
+        convertView = inflator.inflate(ResourceUtils.getResId("layout", adapterViewSpec.itemLayoutId), null);
 
         step.getFlow().getBindEngine().getEventCatcher().setAll(step, null, convertView);
 

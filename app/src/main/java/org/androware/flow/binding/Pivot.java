@@ -74,7 +74,9 @@ import java.util.List;
                 String tks[] = beanFieldSpec.split(DOT_SEP_REGEX);
                 beanId = tks[0];
                 beanField = tks[1];
-
+                if(tks.length > 2) {
+                    widgetId = tks[2];
+                }
             }
 
         } else {

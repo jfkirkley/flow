@@ -5,20 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-
-import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.EventCatcher;
 import org.androware.flow.binding.Pivot;
 import org.androware.flow.binding.TwoWayMapper;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+
 import java.util.List;
 import java.util.Map;
 
@@ -36,20 +29,16 @@ public class BoundStepFragment extends StepFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-         View view = super.onCreateView(inflater, container, savedInstanceState);
-
+        View view = super.onCreateView(inflater, container, savedInstanceState);
 
         if (binderList == null) {
 
-            Object boundBeanObject = step.getBoundBeanObject();
-
-            if (boundBeanObject instanceof List) {
-                 binderList = (List) boundBeanObject;
+            Map beanBinderMap = step.getBeanBinderMap();
+            if( beanBinderMap != null ) {
+                binderList = new ArrayList(step.getBeanBinderMap().values());
             } else {
-                binderList = new ArrayList<>();
-                binderList.add((BeanBinder) boundBeanObject);
+                binderList = new ArrayList();
             }
-
 
         } else {
 
@@ -76,13 +65,13 @@ public class BoundStepFragment extends StepFragment {
             View view = getView();
 
             if (view != null) {
-                TwoWayMapper twoWayMapper = step.twoWayMapper;
+                TwoWayMapper twoWayMapper = step.getTwoWayMapper();
                 EventCatcher eventCatcher = step.getFlow().getBindEngine().getEventCatcher();
                 if (true) {
 
                     for (BeanBinder beanBinder : binderList) {
                         twoWayMapper.refresh(beanBinder);
-                        eventCatcher.updateWidgetGroup(beanBinder.getPivotGroup(), value, view);
+                        //eventCatcher.updateWidgetGroup(beanBinder.getPivotGroup(), value, view);
                     }
 
                 } else {

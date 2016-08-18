@@ -1,6 +1,4 @@
-package org.androware.flow;
-
-import java.util.Map;
+package org.androware.flow.base;
 
 
 /**
@@ -12,10 +10,5 @@ public class PagerSpec extends AdapterViewSpec {
 
     public PagerSpec() {
     }
-
-    public void __get_type_overrides__(Map map) {
-        map.put(ItemSpec.class, PagerSpec.class);
-    }
-
 
 }

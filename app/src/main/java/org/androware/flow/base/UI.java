@@ -1,4 +1,5 @@
-package org.androware.flow;
+package org.androware.flow.base;
+
 
 import java.util.HashMap;
 
@@ -8,7 +9,6 @@ import java.util.HashMap;
  */
 public class UI  {
 
-    //public HashMap<String, ListSpec> lists;
 
     public HashMap<String, AdapterViewSpec> adapterViews;
     public HashMap<String, PagerSpec> pagers;

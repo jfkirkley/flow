@@ -9,16 +9,14 @@ import android.view.View;
 
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import org.androware.androbeans.utils.ResourceUtils;
+import org.androware.flow.base.AdapterViewSpec;
+import org.androware.flow.base.PagerSpec;
+import org.androware.flow.base.UI;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import java.util.List;
-
 
 
 /**
@@ -99,7 +97,7 @@ public class GUI_utils {
                     buildAdapterView(activity, adapterViewSpec, view, step);
 
                     if(step.navMap != null && step.navMap.containsKey(k)) {
-                        Nav nav = step.navMap.get(k);
+                        Nav nav = (Nav)step.navMap.get(k);
                         nav.setItems(adapterViewSpec.getItems(null));
                     }
                 }

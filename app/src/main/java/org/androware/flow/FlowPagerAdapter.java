@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.androware.androbeans.utils.ResourceUtils;
+import org.androware.flow.base.PagerSpec;
 
 /**
  * Created by jkirkley on 5/19/16.

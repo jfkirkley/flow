@@ -30,8 +30,8 @@ public class TestBindStepTransition implements StepTransition {
 
     @Override
     public void postTransition(Step step, TransitionActor actor) {
-
-        Object target = step.getFlow().getBoundObject(step.objectLoaderSpec.objectId);
+/*
+        Object target = step.getFlow().getBoundObject(step.objectLoaderSpecs.objectId);
 
         BeanBinder testWrapper = (BeanBinder) target;
         if(testWrapper != null) {
@@ -41,6 +41,7 @@ public class TestBindStepTransition implements StepTransition {
             testWrapper.set("v4", testValues[nextIndex()]);
             testWrapper.set("v5", testValues[nextIndex()]);
         }
+        */
     }
 
     @Override

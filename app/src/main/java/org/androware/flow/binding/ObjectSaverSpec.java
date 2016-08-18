@@ -1,6 +1,7 @@
-package org.androware.flow;
+package org.androware.flow.binding;
 
 import org.androware.androbeans.utils.ReflectionUtils;
+import org.androware.flow.base.ObjectSaverSpecBase;
 
 import java.util.HashMap;
 
@@ -8,12 +9,7 @@ import java.util.HashMap;
  * Created by jkirkley on 7/4/16.
  */
 
-public class
-ObjectSaverSpec {
-
-    public String objectSaverClassName;
-    public String objectId;
-    public HashMap<String, Object> properties;
+public class ObjectSaverSpec extends ObjectSaverSpecBase {
 
     public ObjectSaver buildSaver() {
         return (ObjectSaver) ReflectionUtils.newInstance(objectSaverClassName);

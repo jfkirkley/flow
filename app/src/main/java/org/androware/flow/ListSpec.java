@@ -1,5 +1,7 @@
 package org.androware.flow;
 
+import org.androware.flow.base.AdapterViewSpec;
+
 import java.util.Map;
 
 

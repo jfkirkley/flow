@@ -2,6 +2,7 @@ package org.androware.flow;
 
 import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.flow.binding.BeanBinder;
+import org.androware.flow.binding.ObjectLoaderSpec;
 
 import java.io.File;
 import java.util.ArrayList;

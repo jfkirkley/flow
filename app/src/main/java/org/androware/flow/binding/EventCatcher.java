@@ -340,6 +340,8 @@ public class EventCatcher {
                 ((RadioGroup) widget).check((int) value);
             } else if (widget instanceof AdapterView) {
                 GUI_utils.setAdapterViewSelectedItem((AdapterView) widget, value);
+            } else if (widget instanceof ImageView) {
+                //setImageView((ImageView) widget, pivot, beanBinder);
             }
 
             suppressEvents = false;
@@ -373,7 +375,7 @@ public class EventCatcher {
     }
 
     public void setAll(Step step, BeanBinder beanBinder, View rootView, View fragmentView) {
-        TwoWayMapper twoWayMapper = step.twoWayMapper;
+        TwoWayMapper twoWayMapper = step.getTwoWayMapper();
 
         Map<String, Pivot> pivots = twoWayMapper.getPivots();
 
@@ -403,7 +405,7 @@ public class EventCatcher {
     }
 
     public void setAll(Step step, View rootView, View fragmentView) {
-        TwoWayMapper twoWayMapper = step.twoWayMapper;
+        TwoWayMapper twoWayMapper = step.getTwoWayMapper();
 
         Map<String, Pivot> pivots = twoWayMapper.getPivots();
 

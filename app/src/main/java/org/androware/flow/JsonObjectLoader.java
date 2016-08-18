@@ -5,6 +5,8 @@ import org.androware.androbeans.ObjectReaderFactory;
 import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.Utils;
 import org.androware.flow.binding.BeanBinder;
+import org.androware.flow.binding.ObjectLoader;
+import org.androware.flow.binding.ObjectLoaderSpec;
 
 import java.io.FileInputStream;
 import java.io.IOException;

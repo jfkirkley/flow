@@ -1,10 +1,7 @@
 package org.androware.flow;
 
 import org.androware.androbeans.utils.ReflectionUtils;
-import org.androware.flow.JsonObjectLoader;
-import org.androware.flow.ObjectLoaderSpec;
-
-import org.androware.flow.Step;
+import org.androware.flow.binding.ObjectLoaderSpec;
 
 /**
  * Created by jkirkley on 8/5/16.

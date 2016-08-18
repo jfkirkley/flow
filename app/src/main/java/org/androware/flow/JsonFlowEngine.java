@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import org.androware.androbeans.JsonObjectReader;
 import org.androware.androbeans.LinkObjectReadListener;
 import org.androware.androbeans.ObjectReadException;
+import org.androware.androbeans.ObjectReaderFactory;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.StringNameAndAliasComparable;
 import org.androware.androbeans.utils.Utils;
@@ -25,12 +26,10 @@ public class JsonFlowEngine {
 
     static JsonFlowEngine jsonFlowEngine = null;
 
-    //private TreeMap<StringNameAndAliasComparable, BeanBinder> globalBeanBinderMap = new TreeMap<>();
 
     private TreeMap<String, BeanBinder> globalBeanBinderMap = new TreeMap<>();
 
     private FlowContainerActivity currentFlowContainerActivity;
-
 
     public Flow getCurrFlow() {
         return currFlow;
@@ -60,15 +59,12 @@ public class JsonFlowEngine {
     }
 
     public Flow loadFlow(String flowName) {
+
         try {
-            JsonObjectReader jsonObjectReader = new JsonObjectReader(ResourceUtils.getResourceInputStream(activity, flowName, "raw"), Flow.class);
-            jsonObjectReader.addObjectReadListener(new LinkObjectReadListener());
-            this.currFlow = (Flow) jsonObjectReader.read();
+            this.currFlow = (Flow) ObjectReaderFactory.getInstance(activity).makeAndRunLinkedJsonReader(flowName, Flow.class);
         } catch (ObjectReadException e) {
-        } catch (IOException e) {
             // TODO handle exeptions properly
         }
-        //TestJSON.buildTest(getFlowFileInputStream("test_flow2"), Flow.class);
 
         return this.currFlow;
     }

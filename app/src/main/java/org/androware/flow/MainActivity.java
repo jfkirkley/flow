@@ -49,28 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
         l("next id:" + ResourceUtils.getResId("id", "next"));
 
-        //JsonFlowEngine.inst(this).startFlow("model_test");
+
         JsonFlowEngine.inst(this).startFlow("bind_test_flow");
 
-        //JsonFlowEngine.inst(this).startFlow("model_test");
 
-        if (false)
-            try {
 
-                JsonObjectReader jsonObjectReader = new JsonObjectReader(ResourceUtils.getResourceInputStream(this, "test_merge", "raw"), Flow.class);
-                jsonObjectReader.addObjectReadListener(new LinkObjectReadListener());
-                Flow flow = (Flow) jsonObjectReader.read();
-
-                l(flow.toStringTest());
-
-                FileOutputStream fos = Utils.getExternalFileOutputStream(this, null, "", "bout.txt");
-                JsonObjectWriter jsonObjectWriter = new JsonObjectWriter(fos);
-                jsonObjectWriter.write(flow);
-                jsonObjectWriter.close();
-
-            } catch (Exception e) {
-
-            }
 
     }
 

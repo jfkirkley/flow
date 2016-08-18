@@ -12,7 +12,7 @@ public class ObjectSaverStepTransition implements StepTransition {
     @Override
     public void preTransition(Step step, TransitionActor actor) {
         BeanBinder beanBinder = (BeanBinder)step.getFlow().getBoundObject(step.objectSaverSpec.objectId);
-        step.objectSaverSpec.buildAndSave(beanBinder.getBean());
+        step.getObjectSaverSpec().buildAndSave(beanBinder.getBean());
     }
 
     @Override
