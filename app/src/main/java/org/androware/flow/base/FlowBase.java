@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class FlowBase {
     public HashMap<String, StepBase> steps;
+    public String name;
     public String layout;
     public String processor;
     public List<ObjectLoaderSpecBase> objectLoaderSpecs;

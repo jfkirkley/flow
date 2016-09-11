@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeMap;
 
 import org.androware.androbeans.JsonObjectReader;
@@ -18,11 +19,46 @@ import org.androware.androbeans.utils.StringNameAndAliasComparable;
 import org.androware.androbeans.utils.Utils;
 import org.androware.flow.binding.BeanBinder;
 
+import static android.R.attr.name;
+
 
 /**
  * Created by jkirkley on 5/6/16.
  */
 public class JsonFlowEngine {
+
+    public static class FlowActivityState {
+        protected Stack<Step> stepStack;
+        HashMap<String, StepFragment> stepFragmentCache;
+        Stack<Class> activityClassStack;
+        int flowLayoutId;
+
+        Flow flow;
+
+        public FlowActivityState (FlowContainerActivity flowContainerActivity) {
+            stepStack = flowContainerActivity.getStepStack();
+            stepFragmentCache = flowContainerActivity.getStepFragmentCache();
+            activityClassStack = flowContainerActivity.getActivityClassStack();
+            flowLayoutId = flowContainerActivity.getFlowLayoutId();
+            flow = flowContainerActivity.getFlow();
+
+        }
+
+        public boolean sameActivity(String flowName) {
+            return flow.name.equals(flowName);
+        }
+
+        public void setData(FlowContainerActivity flowContainerActivity) {
+            flowContainerActivity.setFlow(flow);
+            flowContainerActivity.setStepStack(stepStack);
+            flowContainerActivity.setStepFragmentCache(stepFragmentCache);
+            flowContainerActivity.setActivityClassStack(activityClassStack);
+            flowContainerActivity.setFlowLayoutId(flowLayoutId);
+        }
+
+    }
+
+    private FlowActivityState flowActivityState = null;
 
     static JsonFlowEngine jsonFlowEngine = null;
 
@@ -54,14 +90,11 @@ public class JsonFlowEngine {
         return jsonFlowEngine;
     }
 
-    public void setCurrFlow(Flow currFlow) {
-        this.currFlow = currFlow;
-    }
-
     public Flow loadFlow(String flowName) {
 
         try {
             this.currFlow = (Flow) ObjectReaderFactory.getInstance(activity).makeAndRunLinkedJsonReader(flowName, Flow.class);
+            this.currFlow.name = flowName;
         } catch (ObjectReadException e) {
             // TODO handle exeptions properly
         }
@@ -90,9 +123,24 @@ public class JsonFlowEngine {
         return currentFlowContainerActivity;
     }
 
+    public boolean isSavedActivity(String flowName) {
+        return flowActivityState != null && flowActivityState.sameActivity(flowName);
+    }
+
+    public void resetCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity) {
+        flowActivityState.setData(currentFlowContainerActivity);
+        this.currentFlowContainerActivity = currentFlowContainerActivity;
+    }
+
     public void setCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity) {
         this.currentFlowContainerActivity = currentFlowContainerActivity;
         currFlow = currentFlowContainerActivity.getFlow();
+        this.flowActivityState = new FlowActivityState(currentFlowContainerActivity);
+
+    }
+
+    public void setActivityState(FlowContainerActivity currentFlowContainerActivity) {
+        this.flowActivityState = new FlowActivityState(currentFlowContainerActivity);
     }
 
     public void resumeCurrentFlow() {

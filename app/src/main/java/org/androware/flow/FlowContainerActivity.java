@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.ViewGroup;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 
@@ -26,7 +25,6 @@ import org.androware.androbeans.utils.Utils;
  */
 public class FlowContainerActivity extends FragmentActivity {
 
-    HashMap<String, Stack<Step>> container2StepStackMap;
 
     protected Stack<Step> stepStack;
     HashMap<String, StepFragment> stepFragmentCache;
@@ -43,10 +41,46 @@ public class FlowContainerActivity extends FragmentActivity {
 
     }
 
+    private void init() {
+
+        String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
+
+        if(JsonFlowEngine.inst().isSavedActivity(flowName)) {
+
+            JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this);
+            setContentView(flowLayoutId);
+            //loadStep(flow.getStartNav());
+
+        } else {
+
+            JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
+            flow = JsonFlowEngine.inst().loadFlow(flowName);
+            doPreInit();
+
+            flowLayoutId = ResourceUtils.getResId("layout", flow.layout);
+            setContentView(flowLayoutId);
+
+            stepFragmentCache = new HashMap<>();
+            activityClassStack = new Stack<>();
+            stepStack = new Stack<>();
+
+
+            JsonFlowEngine.inst().setActivityState(this);
+
+            // for the firststep there is no user UI Nav obj, so we fake one
+
+            //if (getSupportFragmentManager().findFragmentByTag(flow.getStartNav().target) == null) {  // avoid readding the same fragment in the event of an orientation change
+            loadStep(flow.getStartNav());
+            //}
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        init();
+/*
         JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
         String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
         flow = JsonFlowEngine.inst().loadFlow(flowName);
@@ -56,22 +90,24 @@ public class FlowContainerActivity extends FragmentActivity {
         flowLayoutId = ResourceUtils.getResId("layout", flow.layout);
         setContentView(flowLayoutId);
 
-        container2StepStackMap = new HashMap<>();
         stepFragmentCache = new HashMap<>();
         activityClassStack = new Stack<>();
         stepStack = new Stack<>();
 
         // for the firststep there is no user UI Nav obj, so we fake one
-        loadStep(flow.getStartNav());
+
+        if (getSupportFragmentManager().findFragmentByTag(flow.getStartNav().target) == null) {  // avoid readding the same fragment in the event of an orientation change
+            loadStep(flow.getStartNav());
+        }
+        */
     }
 
-    public Stack<Step> getStepFragmentStack(Step step) {
-        Stack<Step> stepStack = container2StepStackMap.get(step.parentContainer);
-        if (stepStack == null) {
-            stepStack = new Stack<>();
-            container2StepStackMap.put(step.parentContainer, stepStack);
-        }
-        return stepStack;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // Make sure to call the super method so that the states of our views are saved
+        super.onSaveInstanceState(outState);
+
+        // Save our own state now
     }
 
     public StepFragment getStepFragment(Step step) {
@@ -84,7 +120,7 @@ public class FlowContainerActivity extends FragmentActivity {
     }
 
     public Class getProcessorType(Step step) {
-        if( step.processor != null ) {
+        if (step.processor != null) {
             return ReflectionUtils.getClass(step.processor);
         }
         return null;
@@ -100,7 +136,7 @@ public class FlowContainerActivity extends FragmentActivity {
 
     public boolean stepsToActivity(Step step) {
         Class processorClass = getProcessorType(step);
-        if( processorClass != null) {
+        if (processorClass != null) {
             return isActivity(processorClass);
         }
         return false;
@@ -121,7 +157,7 @@ public class FlowContainerActivity extends FragmentActivity {
         l("load step: " + nav.target);
         Step step = flow.getStep(nav);
 
-        if( step != null ) {  // step generators may return null to indicate a boundary has been reached
+        if (step != null) {  // step generators may return null to indicate a boundary has been reached
 
             step.pushParams(params, stepStack);
 
@@ -153,7 +189,7 @@ public class FlowContainerActivity extends FragmentActivity {
         // pass all params onto the new activity
         step.addAllParams(bundledData);
 
-        if(FlowContainerActivity.class.isAssignableFrom(activityClass)) {
+        if (FlowContainerActivity.class.isAssignableFrom(activityClass)) {
             JsonFlowEngine.inst(this).startFlow(step.targetFlow, activityClass, bundledData);
         } else {
             Utils.startActivity(bundledData, activityClass, this);
@@ -198,14 +234,15 @@ public class FlowContainerActivity extends FragmentActivity {
         if (doCommit) {
             fragmentTransaction.commit();
         }
-         stepStack.push(step);
+        stepStack.push(step);
 
         // NOTE:  post transition happens in onCreateView of the StepFragment class
 
     }
-    public Step getPrevStepInSameContainer(String parentContainer){
-        for(Step step: stepStack) {
-            if(step.parentContainer.equals(parentContainer)) {
+
+    public Step getPrevStepInSameContainer(String parentContainer) {
+        for (Step step : stepStack) {
+            if (step.parentContainer.equals(parentContainer)) {
                 return step;
             }
         }
@@ -217,12 +254,12 @@ public class FlowContainerActivity extends FragmentActivity {
     }
 
     public Step popStep(FragmentTransaction fragmentTransaction, boolean doCommit) {
-        if(stepStack.size()>1) {
+        if (stepStack.size() > 1) {
             Step poppedStep = stepStack.pop();
             poppedStep.popParamsToLastEndPoint();
 
             // Note: activity steps don't load fragments, so the previous step is already loaded
-            if(!stepsToActivity(poppedStep)) {
+            if (!stepsToActivity(poppedStep)) {
 
                 // reload the previous frag
                 Step step = stepStack.peek();
@@ -255,6 +292,7 @@ public class FlowContainerActivity extends FragmentActivity {
     }
 
     boolean justRestarted = false;
+
     @Override
     protected void onRestart() {
         //l("onRestart &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ");
@@ -271,7 +309,7 @@ public class FlowContainerActivity extends FragmentActivity {
     protected void onResume() {
         //l("onResume ======================================== ");
         super.onResume();
-        if(justRestarted) {
+        if (justRestarted) {
             JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
             popStep();
             justRestarted = false;
@@ -279,20 +317,10 @@ public class FlowContainerActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onBackPressed() {
         Step step = popStep();
 
-        if(step == null){
+        if (step == null) {
             super.onBackPressed();
         } else {
             //l("popped step: " + step.toStringTest());
@@ -305,18 +333,52 @@ public class FlowContainerActivity extends FragmentActivity {
 
     }
 
-    @Override
-    public void onAttachFragment(android.support.v4.app.Fragment fragment) {
-        //l("onAttachFragment ======================================== >>>>>>>>>>>>>> :: " + fragment);
-    }
-
-
     public Flow getFlow() {
         return flow;
     }
 
     public Stack<Step> getStepStack() {
         return stepStack;
+    }
+
+    public void setStepStack(Stack<Step> stepStack) {
+        this.stepStack = stepStack;
+    }
+
+    public HashMap<String, StepFragment> getStepFragmentCache() {
+        return stepFragmentCache;
+    }
+
+    public void setStepFragmentCache(HashMap<String, StepFragment> stepFragmentCache) {
+        this.stepFragmentCache = stepFragmentCache;
+    }
+
+    public boolean isJustRestarted() {
+        return justRestarted;
+    }
+
+    public void setJustRestarted(boolean justRestarted) {
+        this.justRestarted = justRestarted;
+    }
+
+    public int getFlowLayoutId() {
+        return flowLayoutId;
+    }
+
+    public void setFlowLayoutId(int flowLayoutId) {
+        this.flowLayoutId = flowLayoutId;
+    }
+
+    public void setFlow(Flow flow) {
+        this.flow = flow;
+    }
+
+    public Stack<Class> getActivityClassStack() {
+        return activityClassStack;
+    }
+
+    public void setActivityClassStack(Stack<Class> activityClassStack) {
+        this.activityClassStack = activityClassStack;
     }
 
 }
