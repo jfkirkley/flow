@@ -49,16 +49,20 @@ public class FlowContainerActivity extends FragmentActivity {
 
             JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this);
             setContentView(flowLayoutId);
+
+            doPreInit();
+
             //loadStep(flow.getStartNav());
 
         } else {
 
             JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
             flow = JsonFlowEngine.inst().loadFlow(flowName);
-            doPreInit();
 
             flowLayoutId = ResourceUtils.getResId("layout", flow.layout);
             setContentView(flowLayoutId);
+
+            doPreInit();
 
             stepFragmentCache = new HashMap<>();
             activityClassStack = new Stack<>();
