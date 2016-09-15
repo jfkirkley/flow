@@ -1,6 +1,7 @@
 package org.androware.flow;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.Utils;
 
+import java.lang.reflect.Field;
 import java.util.Calendar;
 
 /**
@@ -26,6 +28,7 @@ import java.util.Calendar;
  */
 
 public class StepFragment extends Fragment implements TransitionActor {
+
     public Step getStep() {
         return step;
     }
@@ -38,11 +41,12 @@ public class StepFragment extends Fragment implements TransitionActor {
         // pretransition happens in FlowContainerActivity loadStepFragment
         step.postTransition(this);
 
-        ((FlowContainerActivity)getActivity()).fragmentStepVisible(step);
+        ((FlowContainerActivity) getActivity()).fragmentStepVisible(step);
     }
 
 
     public Step step;
+
     /**
      * Create a new instance of StepFragment, initialized to the given step name
      */
@@ -62,6 +66,29 @@ public class StepFragment extends Fragment implements TransitionActor {
         f.setArguments(args);
 
         return f;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        try {
+            Field fragmentManager = Fragment.class.getDeclaredField("mFragmentManager");
+            fragmentManager.setAccessible(true);
+            fragmentManager.set(this, null);
+
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -95,8 +122,7 @@ public class StepFragment extends Fragment implements TransitionActor {
     }
 
 
-
-    public View getSubView(String idStr){
+    public View getSubView(String idStr) {
         return getView().findViewById(ResourceUtils.getResId("id", idStr));
     }
 

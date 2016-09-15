@@ -2,6 +2,7 @@ package org.androware.flow;
 
 
 import android.app.Activity;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,8 @@ public class JsonFlowEngine {
 
         Flow flow;
 
+        Map otherStateData = new HashMap();
+
         public FlowActivityState (FlowContainerActivity flowContainerActivity) {
             stepStack = flowContainerActivity.getStepStack();
             stepFragmentCache = flowContainerActivity.getStepFragmentCache();
@@ -42,6 +45,7 @@ public class JsonFlowEngine {
             flowLayoutId = flowContainerActivity.getFlowLayoutId();
             flow = flowContainerActivity.getFlow();
 
+            flowContainerActivity.saveStateData(otherStateData);
         }
 
         public boolean sameActivity(String flowName) {
@@ -54,11 +58,16 @@ public class JsonFlowEngine {
             flowContainerActivity.setStepFragmentCache(stepFragmentCache);
             flowContainerActivity.setActivityClassStack(activityClassStack);
             flowContainerActivity.setFlowLayoutId(flowLayoutId);
+
+            flowContainerActivity.resetStateData(otherStateData);
+
         }
 
     }
 
-    private FlowActivityState flowActivityState = null;
+    //private FlowActivityState flowActivityState = null;
+
+    private Map<String, FlowActivityState> flowName2StateMap = new HashMap<>();
 
     static JsonFlowEngine jsonFlowEngine = null;
 
@@ -87,6 +96,9 @@ public class JsonFlowEngine {
         if(jsonFlowEngine == null) {
             jsonFlowEngine = new JsonFlowEngine(activity);
         }
+        else if(activity != null) {
+            jsonFlowEngine.activity = activity;
+        }
         return jsonFlowEngine;
     }
 
@@ -94,6 +106,7 @@ public class JsonFlowEngine {
 
         try {
             this.currFlow = (Flow) ObjectReaderFactory.getInstance(activity).makeAndRunLinkedJsonReader(flowName, Flow.class);
+            Log.d("flow", "flowName: " + flowName);
             this.currFlow.name = flowName;
         } catch (ObjectReadException e) {
             // TODO handle exeptions properly
@@ -124,23 +137,30 @@ public class JsonFlowEngine {
     }
 
     public boolean isSavedActivity(String flowName) {
-        return flowActivityState != null && flowActivityState.sameActivity(flowName);
+        return flowName2StateMap.containsKey(flowName);
     }
 
-    public void resetCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity) {
+    public void resetCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity, String flowName) {
+        FlowActivityState flowActivityState = flowName2StateMap.get(flowName);
         flowActivityState.setData(currentFlowContainerActivity);
         this.currentFlowContainerActivity = currentFlowContainerActivity;
+        this.currFlow = flowActivityState.flow;
     }
 
     public void setCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity) {
         this.currentFlowContainerActivity = currentFlowContainerActivity;
         currFlow = currentFlowContainerActivity.getFlow();
-        this.flowActivityState = new FlowActivityState(currentFlowContainerActivity);
+
+        if(currFlow != null && !flowName2StateMap.containsKey(currFlow.name)) {
+            flowName2StateMap.put(currFlow.name, new FlowActivityState(currentFlowContainerActivity));
+        }
 
     }
 
     public void setActivityState(FlowContainerActivity currentFlowContainerActivity) {
-        this.flowActivityState = new FlowActivityState(currentFlowContainerActivity);
+        if(!flowName2StateMap.containsKey(currFlow.name)) {
+            flowName2StateMap.put(currFlow.name, new FlowActivityState(currentFlowContainerActivity));
+        }
     }
 
     public void resumeCurrentFlow() {

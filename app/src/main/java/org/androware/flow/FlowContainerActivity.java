@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.ViewGroup;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 
@@ -41,13 +42,39 @@ public class FlowContainerActivity extends FragmentActivity {
 
     }
 
-    private void init() {
+    public void saveStateData(Map dataMap){
 
+    }
+
+    public void resetStateData(Map dataMap){
+
+    }
+
+    boolean stateReset = false;
+
+    private void firstInit() {
         String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
 
         if(JsonFlowEngine.inst().isSavedActivity(flowName)) {
 
-            JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this);
+            JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this, flowName);
+            stateReset = true;
+
+        } else {
+
+            JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
+            flow = JsonFlowEngine.inst(this).loadFlow(flowName);
+        }
+    }
+
+    private void secondInit() {
+
+        //String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
+
+        //if(JsonFlowEngine.inst().isSavedActivity(flowName)) {
+        if(stateReset) {
+
+            //JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this);
             setContentView(flowLayoutId);
 
             doPreInit();
@@ -56,8 +83,8 @@ public class FlowContainerActivity extends FragmentActivity {
 
         } else {
 
-            JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
-            flow = JsonFlowEngine.inst().loadFlow(flowName);
+            //JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
+            //flow = JsonFlowEngine.inst().loadFlow(flowName);
 
             flowLayoutId = ResourceUtils.getResId("layout", flow.layout);
             setContentView(flowLayoutId);
@@ -68,42 +95,27 @@ public class FlowContainerActivity extends FragmentActivity {
             activityClassStack = new Stack<>();
             stepStack = new Stack<>();
 
-
             JsonFlowEngine.inst().setActivityState(this);
 
-            // for the firststep there is no user UI Nav obj, so we fake one
-
-            //if (getSupportFragmentManager().findFragmentByTag(flow.getStartNav().target) == null) {  // avoid readding the same fragment in the event of an orientation change
             loadStep(flow.getStartNav());
-            //}
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        l("onCreate called");
+
+        firstInit();
+
         super.onCreate(savedInstanceState);
 
-        init();
-/*
-        JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
-        String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
-        flow = JsonFlowEngine.inst().loadFlow(flowName);
+        secondInit();
+    }
 
-        doPreInit();
-
-        flowLayoutId = ResourceUtils.getResId("layout", flow.layout);
-        setContentView(flowLayoutId);
-
-        stepFragmentCache = new HashMap<>();
-        activityClassStack = new Stack<>();
-        stepStack = new Stack<>();
-
-        // for the firststep there is no user UI Nav obj, so we fake one
-
-        if (getSupportFragmentManager().findFragmentByTag(flow.getStartNav().target) == null) {  // avoid readding the same fragment in the event of an orientation change
-            loadStep(flow.getStartNav());
-        }
-        */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        l("onRestoreInstanceState called");
     }
 
     @Override
@@ -236,7 +248,7 @@ public class FlowContainerActivity extends FragmentActivity {
         }
 
         if (doCommit) {
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
         stepStack.push(step);
 
