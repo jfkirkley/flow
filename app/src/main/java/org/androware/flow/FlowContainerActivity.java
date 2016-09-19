@@ -50,19 +50,27 @@ public class FlowContainerActivity extends FragmentActivity {
 
     }
 
+    public String getKey() {
+        return flow != null? flow.name: Utils.getStringFromExtra(getIntent(), "flowName");
+    }
+
     boolean stateReset = false;
 
     private void firstInit() {
-        String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
 
-        if(JsonFlowEngine.inst().isSavedActivity(flowName)) {
+        if(JsonFlowEngine.inst().validDataForThisFlowActivity(this)) {
 
-            JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this, flowName);
+            JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this);
+
+            Step lastStep  = stepStack.peek();
+            if(lastStep != null && stepsToActivity(lastStep) ) {
+                stepStack.pop();  // remove the last step if it goes to an activity (avoid redundant steps)
+            }
             stateReset = true;
 
         } else {
-
             JsonFlowEngine.inst().setCurrentFlowContainerActivity(this);
+            String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
             flow = JsonFlowEngine.inst(this).loadFlow(flowName);
         }
     }
@@ -71,12 +79,11 @@ public class FlowContainerActivity extends FragmentActivity {
 
         //String flowName = Utils.getStringFromExtra(getIntent(), "flowName");
 
-        //if(JsonFlowEngine.inst().isSavedActivity(flowName)) {
+        //if(JsonFlowEngine.inst().validDataForThisFlowActivity(flowName)) {
         if(stateReset) {
 
             //JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this);
             setContentView(flowLayoutId);
-
             doPreInit();
 
             //loadStep(flow.getStartNav());
@@ -336,7 +343,7 @@ public class FlowContainerActivity extends FragmentActivity {
     public void onBackPressed() {
         Step step = popStep();
 
-        if (step == null) {
+        if (step == null && !flow.isRoot) {
             super.onBackPressed();
         } else {
             //l("popped step: " + step.toStringTest());

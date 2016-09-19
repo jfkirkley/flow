@@ -15,6 +15,9 @@ public class FlowBase {
     public String name;
     public String layout;
     public String processor;
+
+    public boolean isRoot = false; // marks the top level flow
+
     public List<ObjectLoaderSpecBase> objectLoaderSpecs;
     public ConstructorSpec stepGeneratorSpec;
     public NavBase startNav;    // navigates to the first step

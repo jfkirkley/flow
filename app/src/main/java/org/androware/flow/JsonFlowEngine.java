@@ -48,8 +48,8 @@ public class JsonFlowEngine {
             flowContainerActivity.saveStateData(otherStateData);
         }
 
-        public boolean sameActivity(String flowName) {
-            return flow.name.equals(flowName);
+        public boolean isValid() {
+            return flow != null;
         }
 
         public void setData(FlowContainerActivity flowContainerActivity) {
@@ -136,12 +136,17 @@ public class JsonFlowEngine {
         return currentFlowContainerActivity;
     }
 
-    public boolean isSavedActivity(String flowName) {
+    public boolean validDataForThisFlowActivity(String flowName) {
         return flowName2StateMap.containsKey(flowName);
     }
 
-    public void resetCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity, String flowName) {
-        FlowActivityState flowActivityState = flowName2StateMap.get(flowName);
+    public boolean validDataForThisFlowActivity(FlowContainerActivity flowContainerActivity) {
+        FlowActivityState flowActivityState = flowName2StateMap.get(flowContainerActivity.getKey());
+        return flowActivityState != null && flowActivityState.isValid();
+    }
+
+    public void resetCurrentFlowContainerActivity(FlowContainerActivity currentFlowContainerActivity) {
+        FlowActivityState flowActivityState = flowName2StateMap.get(currentFlowContainerActivity.getKey());
         flowActivityState.setData(currentFlowContainerActivity);
         this.currentFlowContainerActivity = currentFlowContainerActivity;
         this.currFlow = flowActivityState.flow;
@@ -151,16 +156,25 @@ public class JsonFlowEngine {
         this.currentFlowContainerActivity = currentFlowContainerActivity;
         currFlow = currentFlowContainerActivity.getFlow();
 
+        if(currFlow != null) {
+            setActivityState(currentFlowContainerActivity);
+        }
+        /*
         if(currFlow != null && !flowName2StateMap.containsKey(currFlow.name)) {
             flowName2StateMap.put(currFlow.name, new FlowActivityState(currentFlowContainerActivity));
         }
-
+        */
     }
 
     public void setActivityState(FlowContainerActivity currentFlowContainerActivity) {
-        if(!flowName2StateMap.containsKey(currFlow.name)) {
-            flowName2StateMap.put(currFlow.name, new FlowActivityState(currentFlowContainerActivity));
+        if(!flowName2StateMap.containsKey(currentFlowContainerActivity.getKey())) {
+            flowName2StateMap.put(currentFlowContainerActivity.getKey(), new FlowActivityState(currentFlowContainerActivity));
         }
+    }
+
+    public void removeActivityState(FlowContainerActivity flowContainerActivity) {
+
+        flowName2StateMap.remove(flowContainerActivity.getKey());
     }
 
     public void resumeCurrentFlow() {
