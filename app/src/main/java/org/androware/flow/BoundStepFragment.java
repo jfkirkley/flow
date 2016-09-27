@@ -33,10 +33,8 @@ public class BoundStepFragment extends StepFragment {
 
         if (binderList == null) {
 
-            Map beanBinderMap = step.getBeanBinderMap();
-            if( beanBinderMap != null ) {
-                binderList = new ArrayList(step.getBeanBinderMap().values());
-            } else {
+            binderList = step.getBeanBinderList();
+            if( binderList == null ) {
                 binderList = new ArrayList();
             }
 
@@ -58,7 +56,7 @@ public class BoundStepFragment extends StepFragment {
 
     @Override
     public void onResume() {
-        super.onResume();
+         super.onResume();
 
         if (needsUpdate) {
 

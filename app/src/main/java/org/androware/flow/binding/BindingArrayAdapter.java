@@ -44,11 +44,11 @@ public class BindingArrayAdapter extends ArrayAdapter {
 
         BeanBinder beanBinder = new BeanBinder(rowDataList.get(position), getItemBinderName(step.getName(), position), CURR_ITEM_NAME, bindEngine, step);
 
-        String matchId = adapterViewSpec.beanIds.get(0);   // TODO hack alert! needs work ...
+        //String matchId = adapterViewSpec.beanIds.get(0);   // TODO hack alert! needs work ...
 
         bindEngine.addBeanBinder(beanBinder);   // add with beanId
 
-        beanBinder.setPivotGroup(new PositionalPivotGroup(matchId, step.getTwoWayMapper().pivots, position));
+        //beanBinder.setPivotGroup(new PositionalPivotGroup(matchId, step.getTwoWayMapper().pivots, position));
 
         LayoutInflater inflator = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

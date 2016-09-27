@@ -17,7 +17,7 @@ public class Flow extends FlowBase {
 
 
 
-    BindEngine bindEngine = new BindEngine();
+    BindEngine bindEngine = BindEngine.inst();//new BindEngine();
 
     public void setBoundObject(BeanBinder beanBinder) {
         setBoundObject(beanBinder, false);
@@ -27,13 +27,19 @@ public class Flow extends FlowBase {
 
         bindEngine.addBeanBinder((BeanBinder) beanBinder);
 
+        /*
         if(setGlobal) {
             JsonFlowEngine.inst().addGlobalBeanBinder((BeanBinder) beanBinder);
         }
+        */
     }
 
-    public Object getBoundObject(String name) {
+    public BeanBinder getBoundObject(String name) {
         return bindEngine.getBeanBinder(name);
+    }
+
+    public BeanBinder getBoundObject(ObjectLoaderSpec objectLoaderSpec) {
+        return bindEngine.getBeanBinder(objectLoaderSpec);
     }
 
 
@@ -103,6 +109,10 @@ public class Flow extends FlowBase {
         return (Nav)startNav;
     }
 
+    public void removeBoundObject(ObjectLoaderSpec objectLoaderSpec) {
+        bindEngine.removeBeanBinder(objectLoaderSpec);
+    }
+
     public void loadBoundObject(String phase, Step step) {
         if(objectLoaderSpecs != null ) {
             for(ObjectLoaderSpecBase objectLoaderSpecBase: objectLoaderSpecs) {
@@ -111,6 +121,13 @@ public class Flow extends FlowBase {
                     objectLoaderSpec.buildAndLoad(this, step);
                 }
             }
+        }
+    }
+
+    public void clearFlowScopeBoundObjects() {
+        for (String k : steps.keySet()) {
+            Step step = (Step) steps.get(k);
+            step.clearFlowScopeBoundObjects();
         }
     }
 
@@ -137,7 +154,7 @@ public class Flow extends FlowBase {
         // step post init
         for(String k: steps.keySet()) {
             Step step = (Step)steps.get(k);
-            step.postInit();
+            step.postInit(JsonFlowEngine.inst().getCurrentFlowContainerActivity());
         }
 
     }
@@ -145,4 +162,13 @@ public class Flow extends FlowBase {
     public BindEngine getBindEngine() {
         return bindEngine;
     }
+
+    public void addBoundObject(BeanBinder beanBinder){
+        bindEngine.addBeanBinder(beanBinder);
+    }
+
+    public boolean hasBoundObject(ObjectLoaderSpec objectLoaderSpec){
+        return bindEngine.hasBeanBinder(objectLoaderSpec);
+    }
+
 }

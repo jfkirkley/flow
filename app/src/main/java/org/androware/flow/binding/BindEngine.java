@@ -20,6 +20,16 @@ import static android.R.attr.id;
 public class BindEngine {
     public static final String TAG = "bind";
 
+
+    static BindEngine theBindEngine = null;
+
+    public static BindEngine inst() {
+        if(theBindEngine == null) {
+            theBindEngine = new BindEngine();
+        }
+        return theBindEngine;
+    }
+
     EventCatcher eventCatcher;
 
     List<TwoWayMapper> twoWayMappers;
@@ -103,14 +113,42 @@ public class BindEngine {
         }
     }
 
-    public BeanBinder getBeanBinder(String id) {
-        BeanBinder beanBinder = beanBinderMap.get(id);
-        if(beanBinder == null) {
-            return JsonFlowEngine.inst().getGlobalBeanBinder(id);
+    public BeanBinder getBeanBinder(ObjectLoaderSpec objectLoaderSpec) {
+        BeanBinder beanBinder = getBeanBinder(objectLoaderSpec.objectId);
+        if(beanBinder == null && objectLoaderSpec.alias != null){
+            return getBeanBinder(objectLoaderSpec.alias);
         }
         return beanBinder;
     }
-/*
+
+    public BeanBinder getBeanBinder(String id) {
+        if(id == null) {
+            return null;
+        }
+        BeanBinder beanBinder = beanBinderMap.get(id);
+
+        /*
+        if(beanBinder == null) {
+            return JsonFlowEngine.inst().getGlobalBeanBinder(id);
+        }
+        */
+        return beanBinder;
+    }
+
+    public void removeBeanBinder(ObjectLoaderSpec objectLoaderSpec) {
+        if(objectLoaderSpec.objectId != null) {
+            removeBeanBinder(objectLoaderSpec.objectId);
+        }
+        if(objectLoaderSpec.alias != null) {
+            removeBeanBinder(objectLoaderSpec.alias);
+        }
+    }
+
+    public void removeBeanBinder(String id) {
+        beanBinderMap.remove(id);
+    }
+
+    /*
     public BeanBinder getBeanBinder(String id, String alias) {
         return getBeanBinder(new StringNameAndAliasComparable(id, alias));
     }
@@ -127,5 +165,8 @@ public class BindEngine {
         return eventCatcher;
     }
 
-
+    public boolean hasBeanBinder(ObjectLoaderSpec objectLoaderSpec) {
+        return (objectLoaderSpec.objectId != null && beanBinderMap.containsKey(objectLoaderSpec.objectId)) ||
+                objectLoaderSpec.alias != null && beanBinderMap.containsKey(objectLoaderSpec.alias);
+    }
 }

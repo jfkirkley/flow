@@ -301,6 +301,7 @@ public class EventCatcher {
 
     public void setImageView(ImageView imageView, Pivot pivot, BeanBinder beanBinder) {
         imageView.setImageResource(ResourceUtils.getResId("drawable", (String) beanBinder.get(pivot.beanField)));
+        //imageView.setImageDrawable(ResourceUtils.getDrawableResource((String) beanBinder.get(pivot.beanField)));
     }
 
     public void setTextView(TextView textView, Pivot pivot, BeanBinder beanBinder) {

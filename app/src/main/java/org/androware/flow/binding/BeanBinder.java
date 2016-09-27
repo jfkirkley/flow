@@ -59,7 +59,11 @@ public class BeanBinder {
     }
 
     public boolean equals(BeanBinder beanBinder) {
-        return beanBinder == null? false: beanBinder.beanId.equals(beanId);
+        return beanBinder == null? false: beanBinder.beanId.equals(beanId) || (beanBinder.alias != null && beanBinder.alias.equals(alias));
+    }
+
+    public boolean equals(ObjectLoaderSpec objectLoaderSpec) {
+        return objectLoaderSpec == null? false: objectLoaderSpec.objectId.equals(beanId) || (objectLoaderSpec.alias != null && objectLoaderSpec.alias.equals(alias));
     }
 
     public Object get(String name) {
@@ -100,6 +104,8 @@ public class BeanBinder {
 
         if(broadcastChange) {
             bindEngine.broadcast2Mappers(new Pivot(beanId + "." + name, null), value);
+            // also broadcast to alias
+            bindEngine.broadcast2Mappers(new Pivot(alias + "." + name, null), value);
         }
         return retVal;
     }

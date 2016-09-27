@@ -89,7 +89,7 @@ import java.util.List;
     }
 
     public String getKey() {
-        return beanId + ":" + beanField + ":" + widgetId;
+        return beanId + ":" + beanField; //+ ":" + widgetId;
     }
 
     public boolean matches(BeanBinder beanBinder) {
@@ -106,7 +106,7 @@ import java.util.List;
 
 
     public String toString() {
-        return getKey();
+        return getKey() + ":" + widgetId;
     }
 
     public boolean isWidgetConnected() {

@@ -68,4 +68,8 @@ public class ObjectLoaderSpec extends ObjectLoaderSpecBase {
     public boolean isWhen(String phase) {
         return phase.equals(when) || phase.equals(ON_DEMAND);
     }
+
+    public boolean scopeEndsAtFlow() {
+        return scope != null && (scope.equals(FLOW_SCOPE) || scope.equals(STEP_SCOPE));
+    }
 }

@@ -80,6 +80,7 @@ public class GUI_utils {
             Adapter adapter = (Adapter)adapterViewSpec.adapterConstructorSpec.build();
 
             adapterView.setAdapter(adapter);
+
         }
 
         return adapterView;

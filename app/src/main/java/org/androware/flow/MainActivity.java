@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         ObjectWriterFactory.getInstance(this);   // intialize activity for read factory
 
         ResourceUtils.R = org.androware.flow.R.class;
+        ResourceUtils.context = this;
 
         FilterLog.inst().activateTag(TAG);
         FilterLog.inst().activateTag(Constants.TAG);

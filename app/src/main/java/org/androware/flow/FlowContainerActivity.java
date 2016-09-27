@@ -199,6 +199,8 @@ public class FlowContainerActivity extends FragmentActivity {
         return activityClassStack.peek();
     }
 
+
+
     public void loadActivity(Step step, Class activityClass) {
 
         //step.preTransition();
@@ -213,7 +215,7 @@ public class FlowContainerActivity extends FragmentActivity {
         step.addAllParams(bundledData);
 
         if (FlowContainerActivity.class.isAssignableFrom(activityClass)) {
-            JsonFlowEngine.inst(this).startFlow(step.targetFlow, activityClass, bundledData);
+            JsonFlowEngine.inst(this).startFlow(step.getTargetFlow(), activityClass, bundledData);
         } else {
             Utils.startActivity(bundledData, activityClass, this);
         }
@@ -343,6 +345,7 @@ public class FlowContainerActivity extends FragmentActivity {
     public void onBackPressed() {
         Step step = popStep();
 
+        flow.clearFlowScopeBoundObjects();
         if (step == null && !flow.isRoot) {
             super.onBackPressed();
         } else {

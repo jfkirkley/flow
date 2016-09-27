@@ -24,6 +24,8 @@ import org.androware.flow.binding.ObjectLoaderSpec;
 import org.androware.flow.binding.ObjectSaverSpec;
 import org.androware.flow.binding.TwoWayMapper;
 
+import static android.R.attr.value;
+
 
 /**
  * Created by jkirkley on 5/7/16.
@@ -35,7 +37,7 @@ public class Step extends StepBase {
 
     private Flow flow;
 
-    private Map<String, BeanBinder> beanBinderMap = new HashMap<>();
+    private List<BeanBinder> beanBinderList = null;
 
     private int previousParamStackEndPoint = -1;
 
@@ -50,9 +52,13 @@ public class Step extends StepBase {
 
             if (ReflectionUtils.getFieldType(getClass(), prop) == String.class) {
                 String value = extras.getString(prop);
+
+                value = value == null? extras.getString(name + "_" + prop): value;  // check for step specific props
+
                 if (value != null) {
                     ReflectionUtils.forceSetField(Step.class, prop, this, value);
                 }
+
             } else if (prop.equals("viewCustomizerSpec")) {
                 Map map = (Map) extras.getSerializable(prop);
                 if (map != null) {
@@ -67,6 +73,11 @@ public class Step extends StepBase {
         if (doInit) {
             __init__();
         }
+    }
+
+    public String getTargetFlow() {
+        Object savedTargetFlow = getParam("targetFlow", true);
+        return savedTargetFlow == null? targetFlow: savedTargetFlow.toString();
     }
 
     public ViewCustomizer getViewCustomizer() {
@@ -121,20 +132,51 @@ public class Step extends StepBase {
         this.name = nav.target;
     }
 
-    public void postInit() {
+    public void postInit(FlowContainerActivity flowContainerActivity) {
         if (twoWayMapper != null) {
             ((TwoWayMapper)twoWayMapper).setStep(this);
         }
         loadBoundObjects(ObjectLoaderSpecBase.ON_FLOW_INIT);
+        overWriteProps(flowContainerActivity.getIntent().getExtras(), true);
+    }
+
+    public boolean alreadyInList(ObjectLoaderSpec objectLoaderSpec) {
+        for(BeanBinder beanBinder: beanBinderList) {
+            if(beanBinder.equals(objectLoaderSpec)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void loadBoundObjects(String phase) {
         if(objectLoaderSpecs != null ) {
+            if(beanBinderList == null) {
+                beanBinderList = new ArrayList<>();
+            }
             for(ObjectLoaderSpecBase objectLoaderSpecBase: objectLoaderSpecs) {
                 ObjectLoaderSpec objectLoaderSpec = (ObjectLoaderSpec) objectLoaderSpecBase;
-                if(objectLoaderSpec.isWhen(phase)) {
-                    BeanBinder beanBinder = (BeanBinder)objectLoaderSpec.buildAndLoad(flow, this);
-                    beanBinderMap.put(beanBinder.getBeanId(), beanBinder);
+                if(objectLoaderSpec.isWhen(phase) ) {
+                    if(!flow.hasBoundObject(objectLoaderSpec)) {
+                        BeanBinder beanBinder = (BeanBinder) objectLoaderSpec.buildAndLoad(flow, this);
+                        flow.addBoundObject(beanBinder);
+                        beanBinderList.add(beanBinder);
+                    } else {
+                        if(!alreadyInList(objectLoaderSpec)) {
+                            beanBinderList.add(flow.getBoundObject(objectLoaderSpec));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void clearFlowScopeBoundObjects() {
+        if(objectLoaderSpecs != null ) {
+            for(ObjectLoaderSpecBase objectLoaderSpecBase: objectLoaderSpecs) {
+                ObjectLoaderSpec objectLoaderSpec = (ObjectLoaderSpec) objectLoaderSpecBase;
+                if (objectLoaderSpec.scopeEndsAtFlow()) {
+                    flow.removeBoundObject(objectLoaderSpec);
                 }
             }
         }
@@ -209,7 +251,16 @@ public class Step extends StepBase {
         return null;
     }
 
-    public Object getParam(String key) {
+    public Object getParam(String key, boolean fullDepthSearch) {
+
+        if(fullDepthSearch) {
+            Object p = null;
+            int i = 0;
+            while (p == null && i < paramStack.size()) {
+                p = getParam(key, i++);
+            }
+            return p;
+        }
         return getParam(key, 0);
     }
 
@@ -274,15 +325,15 @@ public class Step extends StepBase {
         this.flow = flow;
     }
 
-    public Map<String, BeanBinder> getBeanBinderMap() {
-        if(beanBinderMap == null) {
+    public List<BeanBinder> getBeanBinderList() {
+        if(beanBinderList == null) {
             loadBoundObjects(ObjectLoaderSpecBase.ON_DEMAND);
         }
-        return beanBinderMap;
+        return beanBinderList;
     }
 
     public BeanBinder getBeanBinder(String id) {
-        return beanBinderMap.get(id);
+        return flow.getBoundObject(id);
     }
 
     public TwoWayMapper getTwoWayMapper() {
