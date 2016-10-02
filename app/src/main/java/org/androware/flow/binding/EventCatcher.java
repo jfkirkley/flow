@@ -3,6 +3,7 @@ package org.androware.flow.binding;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -85,7 +86,6 @@ public class EventCatcher {
         }
     }
 
-
     public class Button2TextViewCatcher implements Button.OnClickListener {
         Pivot pivot;
         CharSequence oldValue;
@@ -110,6 +110,40 @@ public class EventCatcher {
             }
         }
     }
+
+    public class TimePickerCatcher implements TimePicker.OnTimeChangedListener {
+        Pivot pivot;
+        String oldTime;
+
+        public TimePickerCatcher(TimePicker timePicker, Pivot pivot, BeanBinder beanBinder) {
+
+            this.pivot = pivot;
+            Object oldValue = beanBinder.get(pivot.beanField);
+            if(oldValue instanceof String) {
+                oldTime = (String)oldValue;
+                String tks [] = oldTime.split(":");
+                int hours = Integer.parseInt(tks[0]);
+                int mins = Integer.parseInt(tks[1]);
+
+                timePicker.setCurrentHour(hours);
+                timePicker.setCurrentMinute(mins);
+            }
+        }
+
+        @Override
+        public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+            String t = (hourOfDay<10? "0" + hourOfDay: hourOfDay + "") + ":" + (minute<10? "0" + minute: minute + "");
+
+            if(!t.equals(oldTime)) {
+                sendEvent(new WidgetEventInfo(oldTime, t, pivot));
+
+                oldTime = t;
+            }
+
+        }
+
+    }
+
 
     public class TextViewCatcher implements TextWatcher {
 
@@ -163,8 +197,8 @@ public class EventCatcher {
 
     }
 
-    public void catchTimePicker(TimePicker timePicker, Pivot pivot) {
-
+    public void catchTimePicker(TimePicker timePicker, Pivot pivot, BeanBinder beanBinder) {
+        new TimePickerCatcher(timePicker, pivot, beanBinder);
     }
 
     public class AdapterViewCatcher implements AdapterView.OnItemSelectedListener {
@@ -201,6 +235,8 @@ public class EventCatcher {
         public CalendarViewCatcher(CalendarView calendarView, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
             oldValue = (long) beanBinder.get(pivot.beanField);
+            Log.d("time", (new Date(oldValue).toString()));
+
             calendarView.setDate(oldValue);
             calendarView.setOnDateChangeListener(this);
         }
@@ -353,12 +389,7 @@ public class EventCatcher {
 
     public void catchWidget(View baseView, View widget, Pivot pivot, BeanBinder beanBinder) {
         if (widget instanceof TextView) {
-
             catchTextView(baseView, (TextView) widget, pivot, beanBinder);
-
-            //} else if (widget instanceof TextView) {
-            //  setTextView((TextView) widget, pivot, beanBinder);
-
         } else if (widget instanceof DatePicker) {
             catchDatePicker((DatePicker) widget, pivot, beanBinder);
         } else if (widget instanceof CompoundButton) {
@@ -371,8 +402,9 @@ public class EventCatcher {
             catchAdapterView(baseView, (AdapterView) widget, pivot, beanBinder);
         } else if (widget instanceof ImageView) {
             setImageView((ImageView) widget, pivot, beanBinder);
+        } else if (widget instanceof TimePicker) {
+            catchTimePicker((TimePicker)widget, pivot, beanBinder);
         }
-
     }
 
     public void setAll(Step step, BeanBinder beanBinder, View rootView, View fragmentView) {

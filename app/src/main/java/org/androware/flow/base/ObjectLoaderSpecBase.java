@@ -26,5 +26,5 @@ public class ObjectLoaderSpecBase {
     public Boolean autoCreate = false;
     public Map<String, Object> properties;
 
-    public String scope = GLOBAL_SCOPE;
+    public String scope = FLOW_SCOPE;
 }

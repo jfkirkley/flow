@@ -1,6 +1,7 @@
 package org.androware.flow;
 
 import org.androware.androbeans.utils.ReflectionUtils;
+import org.androware.androbeans.utils.Utils;
 import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.ObjectLoaderSpec;
 
@@ -26,7 +27,7 @@ public class MultiExternalJsonFileObjectLoader extends ExternalJsonFileObjectLoa
         for(File file: files) {
             objectLoaderSpec.addProp("ext_file_name", file.getName());
             if(filenameAsId) {
-                objectLoaderSpec.objectId = file.getName();
+                objectLoaderSpec.objectId = Utils.removePunctuation(file.getName(), "_");
             }
             beanBinders.add((BeanBinder)super.load(objectLoaderSpec, flow, step));
         }
