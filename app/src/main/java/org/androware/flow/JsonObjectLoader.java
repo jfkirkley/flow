@@ -50,13 +50,13 @@ public class JsonObjectLoader implements ObjectLoader {
 
             else if ( extFilePath != null &&
                     Utils.externalFileExists(
-                            ObjectReaderFactory.getInstance().activity, "", "", extFilePath )) {
+                            ObjectReaderFactory.getInstance().contextWrapper, "", "", extFilePath )) {
 
                 try {
 
                     object = ObjectReaderFactory.getInstance().makeAndRunJsonReader(
                             new FileInputStream(
-                                    Utils.getExternalFile(ObjectReaderFactory.getInstance().activity, "", "",
+                                    Utils.getExternalFile(ObjectReaderFactory.getInstance().contextWrapper, "", "",
                                             extFilePath )),
                             objectClass,
                             null);

@@ -182,6 +182,7 @@ public class EventCatcher {
         }
     }
 
+
     public void catchTextView(View baseView, TextView textView, Pivot pivot, BeanBinder beanBinder) {
 
         if (pivot.hasOtherTrigger()) {
