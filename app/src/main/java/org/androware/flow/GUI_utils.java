@@ -73,7 +73,7 @@ public class GUI_utils {
         if ( adapterViewSpec.adapterConstructorSpec != null ) {  // ESGAAAAAAAxdz
 
             adapterViewSpec.adapterConstructorSpec.plugInValue(activity, "context");
-            adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec.getItems(null), "items");
+            adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec.getItems(step), "items");
             adapterViewSpec.adapterConstructorSpec.plugInValue(step, "step");
             adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec, "adapter_spec");
 
