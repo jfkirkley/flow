@@ -57,8 +57,9 @@ public class FlowContainerActivity extends FragmentActivity {
     boolean stateReset = false;
 
     private void firstInit() {
+        String forceFullRestart  = Utils.getStringFromExtra(getIntent(), "forceFullRestart");
 
-        if(JsonFlowEngine.inst().validDataForThisFlowActivity(this)) {
+        if(forceFullRestart == null && JsonFlowEngine.inst().validDataForThisFlowActivity(this)) {
 
             JsonFlowEngine.inst().resetCurrentFlowContainerActivity(this);
 
@@ -215,7 +216,7 @@ public class FlowContainerActivity extends FragmentActivity {
         step.addAllParams(bundledData);
 
         if (FlowContainerActivity.class.isAssignableFrom(activityClass)) {
-            JsonFlowEngine.inst(this).startFlow(step.getTargetFlow(), activityClass, bundledData);
+            JsonFlowEngine.inst(this).startFlow(step.getTargetFlow(), activityClass, bundledData, false);
         } else {
             Utils.startActivity(bundledData, activityClass, this);
         }

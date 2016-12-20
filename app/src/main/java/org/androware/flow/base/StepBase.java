@@ -15,7 +15,7 @@ public class StepBase {
     public String processor;
     public String parentContainer;
     public String transitionClassName;
-
+    public String name;
 
     public TwoWayMapperBase twoWayMapper;
     public List<ObjectLoaderSpecBase> objectLoaderSpecs;

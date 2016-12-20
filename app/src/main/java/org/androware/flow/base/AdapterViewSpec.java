@@ -13,6 +13,7 @@ public class AdapterViewSpec {
     public List<String> beanIds;  // TODO, should be an array of ids at least, but probably more framework needed here
     public String viewId;
     public String itemLayoutId;
+    public String name;
     public boolean useDefault;
 
     public ConstructorSpec adapterConstructorSpec;

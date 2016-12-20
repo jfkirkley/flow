@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ResourceUtils.R = R.class;
+
 
         FilterLog.inst().activateTag(TAG);
         //JsonFlowEngine.inst(this).startFlow("bind_test_flow");

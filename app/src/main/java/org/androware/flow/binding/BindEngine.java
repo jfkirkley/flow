@@ -108,7 +108,7 @@ public class BindEngine {
     }
 
     public void addBeanBinderByAlias(BeanBinder beanBinder) {
-        if(beanBinder.alias != null){
+        if(beanBinder.alias != null && beanBinder.alias.length()>0){
             beanBinderMap.put(beanBinder.alias, beanBinder);
         }
     }

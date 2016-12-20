@@ -24,6 +24,7 @@ import org.androware.flow.binding.ObjectLoaderSpec;
 import org.androware.flow.binding.ObjectSaverSpec;
 import org.androware.flow.binding.TwoWayMapper;
 
+import static android.R.attr.name;
 import static android.R.attr.value;
 
 
@@ -33,7 +34,7 @@ import static android.R.attr.value;
 public class Step extends StepBase {
 
     public static final int MAX_PARAMS = 1024;
-    String name;
+
 
     private Flow flow;
 

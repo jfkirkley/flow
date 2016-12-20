@@ -5,6 +5,7 @@ package org.androware.flow.base;
  */
 
 public class NavBase {
+    public String listAdapterName;
     public String compName;
     public String event;
     public String anim_in;

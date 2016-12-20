@@ -109,6 +109,7 @@ public class JsonFlowEngine {
             Log.d("flow", "flowName: " + flowName);
             this.currFlow.name = flowName;
         } catch (ObjectReadException e) {
+            e.printStackTrace();
             // TODO handle exeptions properly
         }
 
@@ -123,13 +124,20 @@ public class JsonFlowEngine {
         return this.currFlow.getStep(stepName);
     }
 
-    public void startFlow(String flowName, Class theFlowContainerActivityClass, HashMap map) {
+    public void startFlow(String flowName, Class theFlowContainerActivityClass, HashMap map, boolean forceRestart) {
         map.put("flowName", flowName);
+        if(forceRestart) {
+            map.put("forceFullRestart", "yes");
+        }
         Utils.startActivity(theFlowContainerActivityClass,  map, activity);
     }
 
     public void startFlow(String flowName) {
-        startFlow(flowName, FlowContainerActivity.class,  new HashMap());
+        startFlow(flowName, false);
+    }
+
+    public void startFlow(String flowName, boolean forceRestart) {
+        startFlow(flowName, FlowContainerActivity.class,  new HashMap(), forceRestart);
     }
 
     public FlowContainerActivity getCurrentFlowContainerActivity() {

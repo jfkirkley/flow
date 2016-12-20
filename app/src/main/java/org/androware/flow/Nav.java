@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.MultiListenerUtils;
+import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.base.NavBase;
 
@@ -146,11 +147,17 @@ public class Nav extends NavBase {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view,
                                                 int position, long id) {
-                            Map itemSpecMap = (Map) items.get(position);
-                            //l("target: " + listItemSpec.target);
-                            thisNav.target = (String) itemSpecMap.get("target");
-                            activity.loadStep(thisNav, itemSpecMap.get("props"));
-
+                            Object val = items.get(position);
+                            if(val instanceof Map) {
+                                Map itemSpecMap = (Map) val;
+                                //l("target: " + listItemSpec.target);
+                                thisNav.target = (String) itemSpecMap.get("target");
+                                activity.loadStep(thisNav, itemSpecMap.get("props"));
+                            } else {
+                                thisNav.target = (String)ReflectionUtils.getFieldValue(val, "target");
+                                Map props = (Map)ReflectionUtils.getFieldValue(val, "props");
+                                activity.loadStep(thisNav, props);
+                            }
                         }
 
                     });
