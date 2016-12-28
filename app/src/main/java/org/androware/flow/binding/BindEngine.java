@@ -76,6 +76,8 @@ public class BindEngine {
         } else {
             broadcast2Mappers(pivot, newValue);
         }
+        // save changes if requested
+        beanBinder.persist();
         return cascadeRetVal;
     }
 

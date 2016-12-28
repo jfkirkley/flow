@@ -17,6 +17,8 @@ import org.androware.flow.base.UI;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -24,19 +26,50 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class GUI_utils {
 
-    public static int getAdapterItemPosition(Adapter adapter, Object item){
-        for( int i = 0; i < adapter.getCount(); ++i) {
-            if(adapter.getItem(i).equals( item ) ) {
+    public abstract static class AdapterItemWrapper {
+        Object item;
+
+        public AdapterItemWrapper(Object item) {
+            this.item = item;
+        }
+
+        public boolean equals(Object otherItem) {
+            return item.equals(otherItem);
+        }
+
+        public abstract void setSelected(AdapterView adapterView, int position, boolean selected);
+        public abstract AdapterItemWrapper newInstance(Object item);
+    }
+
+    public static List getAdapterItems(Adapter adapter) {
+        List list = new ArrayList();
+        for (int i = 0; i < adapter.getCount(); ++i) {
+            list.add(adapter.getItem(i));
+        }
+        return list;
+    }
+
+    public static int getAdapterItemPosition(Adapter adapter, Object item) {
+        for (int i = 0; i < adapter.getCount(); ++i) {
+            if (item.equals(adapter.getItem(i))) {
                 return i;
             }
         }
         return -1;
     }
 
-    public static void setAdapterViewSelectedItem(AdapterView adapterView, Object item){
+    public static void setAdapterViewSelectedItem(AdapterView adapterView, Object item) {
+        AdapterItemWrapper adapterItemWrapper = (item instanceof AdapterItemWrapper) ? (AdapterItemWrapper) item : null;
+        //item = adapterItemWrapper != null? adapterItemWrapper
+
         int i = getAdapterItemPosition(adapterView.getAdapter(), item);
-        if( i != -1 ) {
-            adapterView.setSelection(i);
+        if (i != -1) {
+            if (adapterItemWrapper == null) {
+                adapterView.setSelection(i);
+            } else {
+                adapterItemWrapper.setSelected(adapterView, i, true);
+            }
+            //adapterView.get
         }
     }
 
@@ -70,14 +103,14 @@ public class GUI_utils {
 
         final AdapterView adapterView = (AdapterView) view.findViewById(ResourceUtils.getResId("id", adapterViewSpec.viewId));
 
-        if ( adapterViewSpec.adapterConstructorSpec != null ) {  // ESGAAAAAAAxdz
+        if (adapterViewSpec.adapterConstructorSpec != null) {  // ESGAAAAAAAxdz
 
             adapterViewSpec.adapterConstructorSpec.plugInValue(activity, "context");
             adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec.getItems(step), "items");
             adapterViewSpec.adapterConstructorSpec.plugInValue(step, "step");
             adapterViewSpec.adapterConstructorSpec.plugInValue(adapterViewSpec, "adapter_spec");
 
-            Adapter adapter = (Adapter)adapterViewSpec.adapterConstructorSpec.build();
+            Adapter adapter = (Adapter) adapterViewSpec.adapterConstructorSpec.build();
 
             adapterView.setAdapter(adapter);
 
@@ -91,15 +124,15 @@ public class GUI_utils {
     public static void buildUI(Activity activity, Step step, View view) {
         UI ui = step.ui;
 
-        if( ui != null ) {
+        if (ui != null) {
             if (ui.adapterViews != null) {
                 for (String k : ui.adapterViews.keySet()) {
                     AdapterViewSpec adapterViewSpec = ui.adapterViews.get(k);
-                    buildAdapterView(activity, adapterViewSpec, view, step);
+                    AdapterView adapterView = buildAdapterView(activity, adapterViewSpec, view, step);
 
-                    if(step.navMap != null && step.navMap.containsKey(k)) {
-                        Nav nav = (Nav)step.navMap.get(k);
-                        nav.setItems(adapterViewSpec.getItems(null));
+                    if (step.navMap != null && step.navMap.containsKey(k)) {
+                        Nav nav = (Nav) step.navMap.get(k);
+                        nav.setItems(getAdapterItems(adapterView.getAdapter()));
                     }
                 }
             }

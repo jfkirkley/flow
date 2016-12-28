@@ -15,7 +15,11 @@ import org.androware.flow.binding.TwoWayMapper;
  */
 public class Flow extends FlowBase {
 
+    public Step getCurrStep() {
+        return currStep;
+    }
 
+    private Step currStep;
 
     BindEngine bindEngine = BindEngine.inst();//new BindEngine();
 
@@ -95,6 +99,7 @@ public class Flow extends FlowBase {
         if(step != null) {
             step.setCurrNav(nav);
         }
+        currStep = step;
         return step;
     }
 

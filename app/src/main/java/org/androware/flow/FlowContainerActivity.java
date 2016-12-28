@@ -346,8 +346,8 @@ public class FlowContainerActivity extends FragmentActivity {
     public void onBackPressed() {
         Step step = popStep();
 
-        flow.clearFlowScopeBoundObjects();
         if (step == null && !flow.isRoot) {
+            flow.clearFlowScopeBoundObjects();
             super.onBackPressed();
         } else {
             //l("popped step: " + step.toStringTest());

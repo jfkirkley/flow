@@ -2,6 +2,8 @@ package org.androware.flow.binding;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +21,11 @@ import java.util.List;
  */
 public class BindingArrayAdapter extends ArrayAdapter {
 
-    public static  final String CURR_ITEM_NAME = "currItem";
-
     List<Object> rowDataList;
     Step step;
     Activity activity;
+
+    int selectedItem = -1;
 
     AdapterViewSpec adapterViewSpec;
     public BindingArrayAdapter(Activity activity, List<Object> rowDataList, Step step, AdapterViewSpec adapterViewSpec) {
@@ -42,7 +44,7 @@ public class BindingArrayAdapter extends ArrayAdapter {
 
         BindEngine bindEngine = step.getFlow().getBindEngine();
 
-        BeanBinder beanBinder = new BeanBinder(rowDataList.get(position), getItemBinderName(step.getName(), position), CURR_ITEM_NAME, bindEngine, step);
+        BeanBinder beanBinder = new BeanBinder(rowDataList.get(position), getItemBinderName(step.getName(), position), Pivot.CURR_ITEM_NAME, bindEngine, step);
 
         //String matchId = adapterViewSpec.beanIds.get(0);   // TODO hack alert! needs work ...
 
@@ -55,12 +57,24 @@ public class BindingArrayAdapter extends ArrayAdapter {
         // inflating the row layout we defined earlier.
         convertView = inflator.inflate(ResourceUtils.getResId("layout", adapterViewSpec.itemLayoutId), null);
 
-        step.getFlow().getBindEngine().getEventCatcher().setAll(step, null, convertView);
+
+        step.getFlow().getBindEngine().getEventCatcher().setAll(step, null, convertView, true);
+
+        Log.d("prefs", position  + " ==  " + selectedItem);
+        if(position == selectedItem){
+            convertView.setBackgroundColor(Color.LTGRAY);
+        } else {
+            convertView.setBackgroundColor(Color.WHITE);
+        }
 
         return convertView;
     }
 
     public static String getItemBinderName(String stepName, int position){
         return stepName + "_item_" + position;
+    }
+
+    public void setSelectedItem(int i){
+        selectedItem = i;
     }
 }

@@ -16,6 +16,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import android.widget.TextView;
@@ -23,8 +24,11 @@ import android.widget.TimePicker;
 
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.MultiListenerUtils;
+import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.GUI_utils;
+//import org.androware.flow.R;
+import org.androware.flow.R;
 import org.androware.flow.Step;
 
 import java.util.Calendar;
@@ -202,7 +206,7 @@ public class EventCatcher {
         new TimePickerCatcher(timePicker, pivot, beanBinder);
     }
 
-    public class AdapterViewCatcher implements AdapterView.OnItemSelectedListener {
+    public class AdapterViewCatcher implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
         Pivot pivot;
         Object oldValue;
 
@@ -212,12 +216,23 @@ public class EventCatcher {
             GUI_utils.setAdapterViewSelectedItem(adapterView, oldValue);
 
             adapterView.setOnItemSelectedListener(this);
+
+            if(oldValue instanceof GUI_utils.AdapterItemWrapper) {
+                adapterView.setOnItemClickListener(this);
+            }
         }
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Object newValue = parent.getAdapter().getItem(position);
             if (!oldValue.equals(newValue)) {
+                if(oldValue instanceof GUI_utils.AdapterItemWrapper) {
+                    GUI_utils.AdapterItemWrapper oldWrapper = (GUI_utils.AdapterItemWrapper)oldValue;
+                    GUI_utils.AdapterItemWrapper newWrapper = oldWrapper.newInstance(newValue);
+                    //oldWrapper.setSelected(parent, -1, false);
+                    newWrapper.setSelected(parent, position, true);
+                    newValue = newWrapper;
+                }
                 sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
                 oldValue = newValue;
             }
@@ -225,6 +240,23 @@ public class EventCatcher {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Object newValue = parent.getAdapter().getItem(position);
+            if (!oldValue.equals(newValue)) {
+                if(oldValue instanceof GUI_utils.AdapterItemWrapper) {
+                    GUI_utils.AdapterItemWrapper oldWrapper = (GUI_utils.AdapterItemWrapper)oldValue;
+                    GUI_utils.AdapterItemWrapper newWrapper = oldWrapper.newInstance(newValue);
+                    //oldWrapper.setSelected(parent, -1, false);
+                    //newWrapper.setSelected(parent, position, true);
+                    newValue = newWrapper;
+                }
+                sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
+                oldValue = newValue;
+            }
 
         }
     }
@@ -283,19 +315,25 @@ public class EventCatcher {
 
     public class RadioGroupCatcher implements RadioGroup.OnCheckedChangeListener {
         Pivot pivot;
-        int oldValue;
+        String oldValue;
 
         public RadioGroupCatcher(RadioGroup radioGroup, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
-            oldValue = (int) beanBinder.get(pivot.beanField);
-            radioGroup.setId(oldValue);
+            oldValue = (String) beanBinder.get(pivot.beanField);
+            l("old value: " + oldValue);
+            radioGroup.check(ResourceUtils.getResId("id", oldValue));
             radioGroup.setOnCheckedChangeListener(this);
+
         }
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-            sendEvent(new WidgetEventInfo(oldValue, checkedId, pivot));
-            oldValue = checkedId;
+            String newValue = ResourceUtils.getViewIdName(group.findViewById(checkedId));
+            l("new value: " + newValue);
+            if(!oldValue.equals(newValue)) {
+                sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
+                oldValue = newValue;
+            }
         }
     }
 
@@ -375,11 +413,12 @@ public class EventCatcher {
             } else if (widget instanceof CalendarView) {
                 ((CalendarView) widget).setDate((long) value);
             } else if (widget instanceof RadioGroup) {
-                ((RadioGroup) widget).check((int) value);
+                ((RadioGroup) widget).check(ResourceUtils.getResId("id",(String)value));
             } else if (widget instanceof AdapterView) {
                 GUI_utils.setAdapterViewSelectedItem((AdapterView) widget, value);
             } else if (widget instanceof ImageView) {
-                //setImageView((ImageView) widget, pivot, beanBinder);
+                ((ImageView)widget).setImageResource(ResourceUtils.getResId("drawable", (String) value));
+                // setImageView((ImageView) widget, pivot, beanBinder);
             }
 
             suppressEvents = false;
@@ -438,13 +477,17 @@ public class EventCatcher {
 
     }
 
-    public void setAll(Step step, View rootView, View fragmentView) {
+    public void setAll(Step step, View rootView, View fragmentView, boolean allowTemporary) {
         TwoWayMapper twoWayMapper = step.getTwoWayMapper();
 
         Map<String, Pivot> pivots = twoWayMapper.getPivots();
 
         for (String beanKey : pivots.keySet()) {
             Pivot pivot = pivots.get(beanKey);
+
+            if(!allowTemporary && pivot.isTemporary()) {
+                continue;
+            }
 
             BeanBinder beanBinder = bindEngine.getBeanBinder(pivot);
 

@@ -72,7 +72,7 @@ public class JsonObjectLoader implements ObjectLoader {
                 object = ReflectionUtils.newInstance(objectClass);
             }
 
-            BeanBinder beanBinder = new BeanBinder(object, spec.objectId, spec.alias, flow.getBindEngine());
+            BeanBinder beanBinder = new BeanBinder(object, spec.objectId, spec.alias, flow.getBindEngine(), step);
             flow.setBoundObject(beanBinder);
 
             return beanBinder;

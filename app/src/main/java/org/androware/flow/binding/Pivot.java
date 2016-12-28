@@ -14,6 +14,7 @@ import java.util.List;
     public static  final String DOT_SEP = ".";
     public static  final String DOT_SEP_REGEX = "\\.";
     public static  final String FORCE_UPDATE_SUFFIX = "!";
+    public static  final String CURR_ITEM_NAME = "currItem";
 
     public String beanId;
     public String beanField;
@@ -86,6 +87,10 @@ import java.util.List;
         }
 
         this.widgetId = widgetId;
+    }
+
+    public boolean isTemporary() {
+        return beanId != null && beanId.equals(CURR_ITEM_NAME);
     }
 
     public String getKey() {

@@ -1,10 +1,14 @@
 package org.androware.flow.binding;
 
+import android.util.Log;
+
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ReflectionUtils;
 
 import org.androware.androbeans.utils.StringNameAndAliasComparable;
+import org.androware.flow.JsonFlowEngine;
 import org.androware.flow.Step;
+import org.androware.flow.base.ObjectSaverSpecBase;
 
 import java.util.Map;
 
@@ -155,5 +159,30 @@ public class BeanBinder {
 
     public StringNameAndAliasComparable getComparableId() {
         return new StringNameAndAliasComparable(beanId, alias);
+    }
+
+    public void persist() {
+        Step currStep = step != null? step: JsonFlowEngine.inst().getCurrStep();
+        Log.d("prefs", "currStep: " + currStep);
+
+
+        if(currStep != null )
+            Log.d("prefs", "" + currStep.objectSaverSpec);
+
+        if(currStep != null && currStep.objectSaverSpec != null )
+            Log.d("prefs", currStep.objectSaverSpec.saveTrigger + " :: " + currStep.objectSaverSpec.objectId);
+
+
+
+        if(currStep == null || currStep.objectSaverSpec == null || currStep.objectSaverSpec.objectId == null || currStep.objectSaverSpec.saveTrigger == null) {
+            return;
+        }
+        Log.d("prefs", currStep.objectSaverSpec.saveTrigger + " :: " + currStep.objectSaverSpec.objectId);
+        if (currStep.objectSaverSpec.saveTrigger.equals(ObjectSaverSpecBase.CHANGE_TRIGGER) &&
+                (currStep.objectSaverSpec.objectId.equals(beanId) || currStep.objectSaverSpec.objectId.equals(alias))) {
+            Log.d("prefs", "save away");
+            currStep.getObjectSaverSpec().buildAndSave(bean);
+
+        }
     }
 }

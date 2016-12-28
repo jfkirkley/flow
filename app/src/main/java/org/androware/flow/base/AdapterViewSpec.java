@@ -45,7 +45,8 @@ public class AdapterViewSpec {
     }
 
     public List getItems(Object spec) {
-        if(items == null && itemGenerator != null) {
+
+        if(/*items == null &&*/ itemGenerator != null) {
             items = itemGenerator.getItems(spec);
         }
 

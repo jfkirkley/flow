@@ -26,6 +26,13 @@ import static android.R.attr.name;
 /**
  * Created by jkirkley on 5/6/16.
  */
+/*
+TODO:
+- need multiple object savers
+- implement saveTrigger for transition and flowEnd
+
+
+ */
 public class JsonFlowEngine {
 
     public static class FlowActivityState {
@@ -78,6 +85,10 @@ public class JsonFlowEngine {
 
     public Flow getCurrFlow() {
         return currFlow;
+    }
+
+    public Step getCurrStep() {
+        return currFlow != null? currFlow.getCurrStep(): null;
     }
 
     Flow currFlow;

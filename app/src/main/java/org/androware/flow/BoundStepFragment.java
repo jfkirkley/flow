@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+
 import org.androware.flow.binding.BeanBinder;
 import org.androware.flow.binding.EventCatcher;
 import org.androware.flow.binding.Pivot;
@@ -29,7 +31,9 @@ public class BoundStepFragment extends StepFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        final View view = super.onCreateView(inflater, container, savedInstanceState);
+
+
 
         if (binderList == null) {
 
@@ -46,8 +50,23 @@ public class BoundStepFragment extends StepFragment {
         // need the root view, as some components are higher in the hierarchy than the current fragment
         final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.getActivity().findViewById(android.R.id.content)).getChildAt(0);
 
-        for (BeanBinder beanBinder : binderList) {
-            step.getFlow().getBindEngine().getEventCatcher().setAll(step, beanBinder, viewGroup, view);
+        viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                viewGroup.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                // at this point layout is complete
+                step.getFlow().getBindEngine().getEventCatcher().setAll(step, viewGroup, view, false);
+            }
+        });
+
+        if(false) {
+            for (BeanBinder beanBinder : binderList) {
+                step.getFlow().getBindEngine().getEventCatcher().setAll(step, beanBinder, viewGroup, view);
+            }
+        } else {
+            //step.getFlow().getBindEngine().getEventCatcher().setAll(step, viewGroup, view);
         }
 
         return view;

@@ -155,8 +155,10 @@ public class Nav extends NavBase {
                                 activity.loadStep(thisNav, itemSpecMap.get("props"));
                             } else {
                                 thisNav.target = (String)ReflectionUtils.getFieldValue(val, "target");
-                                Map props = (Map)ReflectionUtils.getFieldValue(val, "props");
-                                activity.loadStep(thisNav, props);
+                                if(thisNav.target != null) {
+                                    Map props = (Map) ReflectionUtils.getFieldValue(val, "props");
+                                    activity.loadStep(thisNav, props);
+                                }
                             }
                         }
 
