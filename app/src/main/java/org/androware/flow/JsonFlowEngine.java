@@ -15,6 +15,7 @@ import org.androware.androbeans.JsonObjectReader;
 import org.androware.androbeans.LinkObjectReadListener;
 import org.androware.androbeans.ObjectReadException;
 import org.androware.androbeans.ObjectReaderFactory;
+import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.StringNameAndAliasComparable;
 import org.androware.androbeans.utils.Utils;
@@ -34,6 +35,10 @@ TODO:
 
  */
 public class JsonFlowEngine {
+
+    public static void l(String t) {
+        FilterLog.inst().log("flow", t);
+    }
 
     public static class FlowActivityState {
         protected Stack<Step> stepStack;
@@ -117,7 +122,7 @@ public class JsonFlowEngine {
 
         try {
             this.currFlow = (Flow) ObjectReaderFactory.getInstance(activity).makeAndRunLinkedJsonReader(flowName, Flow.class);
-            Log.d("flow", "flowName: " + flowName);
+            l( "flowName: " + flowName);
             this.currFlow.name = flowName;
         } catch (ObjectReadException e) {
             e.printStackTrace();

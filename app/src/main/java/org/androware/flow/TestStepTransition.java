@@ -7,7 +7,7 @@ import android.util.Log;
  */
 public class TestStepTransition implements StepTransition {
     public void l(String s) {
-        Log.d(Constants.TAG, s);
+        l( s);
     }
 
     @Override

@@ -163,24 +163,24 @@ public class BeanBinder {
 
     public void persist() {
         Step currStep = step != null? step: JsonFlowEngine.inst().getCurrStep();
-        Log.d("prefs", "currStep: " + currStep);
+        l( "currStep: " + currStep);
 
 
         if(currStep != null )
-            Log.d("prefs", "" + currStep.objectSaverSpec);
+            l( "" + currStep.objectSaverSpec);
 
         if(currStep != null && currStep.objectSaverSpec != null )
-            Log.d("prefs", currStep.objectSaverSpec.saveTrigger + " :: " + currStep.objectSaverSpec.objectId);
+            l( currStep.objectSaverSpec.saveTrigger + " :: " + currStep.objectSaverSpec.objectId);
 
 
 
         if(currStep == null || currStep.objectSaverSpec == null || currStep.objectSaverSpec.objectId == null || currStep.objectSaverSpec.saveTrigger == null) {
             return;
         }
-        Log.d("prefs", currStep.objectSaverSpec.saveTrigger + " :: " + currStep.objectSaverSpec.objectId);
+        l( currStep.objectSaverSpec.saveTrigger + " :: " + currStep.objectSaverSpec.objectId);
         if (currStep.objectSaverSpec.saveTrigger.equals(ObjectSaverSpecBase.CHANGE_TRIGGER) &&
                 (currStep.objectSaverSpec.objectId.equals(beanId) || currStep.objectSaverSpec.objectId.equals(alias))) {
-            Log.d("prefs", "save away");
+            l( "save away");
             currStep.getObjectSaverSpec().buildAndSave(bean);
 
         }

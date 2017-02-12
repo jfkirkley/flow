@@ -268,7 +268,7 @@ public class EventCatcher {
         public CalendarViewCatcher(CalendarView calendarView, Pivot pivot, BeanBinder beanBinder) {
             this.pivot = pivot;
             oldValue = (long) beanBinder.get(pivot.beanField);
-            Log.d("time", (new Date(oldValue).toString()));
+            l( (new Date(oldValue).toString()));
 
             calendarView.setDate(oldValue);
             calendarView.setOnDateChangeListener(this);

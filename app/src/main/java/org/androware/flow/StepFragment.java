@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.androbeans.utils.Utils;
@@ -31,6 +32,10 @@ public class StepFragment extends Fragment implements TransitionActor {
 
     public Step getStep() {
         return step;
+    }
+
+    public static void l(String t) {
+        FilterLog.inst().log("flow", t);
     }
 
 
@@ -53,8 +58,8 @@ public class StepFragment extends Fragment implements TransitionActor {
     public static StepFragment newInstance(Step step) {
 
         String stepName = step.getName();
-        Log.d("bob", "stepanem: " + stepName);
-        Log.d("bob", "stepanem: " + step.processor);
+        l( "stepanem: " + stepName);
+        l( "stepanem: " + step.processor);
 
 
         //StepFragment f = new StepFragment();

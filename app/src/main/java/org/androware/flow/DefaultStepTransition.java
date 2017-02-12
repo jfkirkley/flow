@@ -2,12 +2,14 @@ package org.androware.flow;
 
 import android.util.Log;
 
+import org.androware.androbeans.utils.FilterLog;
+
 /**
  * Created by jkirkley on 5/9/16.
  */
 public class DefaultStepTransition implements StepTransition {
     public void l(String s) {
-        Log.d(Constants.TAG, s);
+        FilterLog.inst().log("flow",  s);
     }
 
     @Override

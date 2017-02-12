@@ -2,6 +2,7 @@ package org.androware.flow;
 
 import android.util.Log;
 
+import org.androware.androbeans.utils.FilterLog;
 import org.androware.flow.binding.BeanBinder;
 
 import static org.androware.flow.CachedObjectLoader.CACHED_OBJECT_NAME;
@@ -11,11 +12,17 @@ import static org.androware.flow.CachedObjectLoader.CACHED_OBJECT_NAME;
  */
 
 public class ObjectSaverStepTransition implements StepTransition {
+
+    public static void l(String t) {
+        FilterLog.inst().log("flow", t);
+    }
+
+
     @Override
     public void preTransition(Step step, TransitionActor actor) {
-        Log.d("prefs", "ojb ididi: " + step.objectSaverSpec.objectId);
+        l( "ojb ididi: " + step.objectSaverSpec.objectId);
         BeanBinder beanBinder = (BeanBinder)step.getFlow().getBoundObject(step.objectSaverSpec.objectId);
-        Log.d("prefs", "ojb ididi: " + beanBinder);
+        l( "ojb ididi: " + beanBinder);
         step.getObjectSaverSpec().buildAndSave(beanBinder.getBean());
     }
 

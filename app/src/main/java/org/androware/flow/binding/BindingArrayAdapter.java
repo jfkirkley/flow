@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
 import org.androware.flow.base.AdapterViewSpec;
 import org.androware.flow.Step;
@@ -20,6 +21,12 @@ import java.util.List;
  * Created by jkirkley on 5/11/16.
  */
 public class BindingArrayAdapter extends ArrayAdapter {
+
+    public static void l(String t) {
+        FilterLog.inst().log("binding", t);
+    }
+
+
 
     List<Object> rowDataList;
     Step step;
@@ -60,7 +67,7 @@ public class BindingArrayAdapter extends ArrayAdapter {
 
         step.getFlow().getBindEngine().getEventCatcher().setAll(step, null, convertView, true);
 
-        Log.d("prefs", position  + " ==  " + selectedItem);
+        l( position  + " ==  " + selectedItem);
         if(position == selectedItem){
             convertView.setBackgroundColor(Color.LTGRAY);
         } else {
