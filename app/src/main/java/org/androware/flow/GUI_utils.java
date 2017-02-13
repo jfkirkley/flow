@@ -35,7 +35,7 @@ public class GUI_utils {
     public static class SwipeDetector {
 
         private static SwipeDetector instance = null;
-
+        public static float DX_THRESHOLD = 20;
         private float swipeThreshold;
 
         private float touchDownX;
@@ -59,6 +59,7 @@ public class GUI_utils {
             float screenHeight = wm.getDefaultDisplay().getHeight();
 
             swipeThreshold = (screenHeight>screenWidth)? screenHeight/10: screenWidth/10;
+            DX_THRESHOLD = swipeThreshold/2;
         }
 
         public void setTouchDown(float x, float y) {
