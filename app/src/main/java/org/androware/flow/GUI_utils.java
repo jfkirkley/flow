@@ -8,8 +8,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.view.WindowManager;
@@ -24,6 +26,7 @@ import org.androware.flow.base.UI;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -31,82 +34,6 @@ import java.util.List;
  * Created by jkirkley on 5/10/16.
  */
 public class GUI_utils {
-
-    public static class SwipeDetector {
-
-        private static SwipeDetector instance = null;
-        public static float DX_THRESHOLD = 20;
-        private float swipeThreshold;
-
-        private float touchDownX;
-        private float touchDownY;
-
-        public static SwipeDetector inst() {
-            return inst(null);
-        }
-
-        public static SwipeDetector inst(ContextWrapper contextWrapper) {
-            if(instance == null) {
-                instance = new SwipeDetector(contextWrapper);
-            }
-            return instance;
-        }
-
-        public SwipeDetector(ContextWrapper contextWrapper) {
-            WindowManager wm = (WindowManager) contextWrapper.getSystemService(Context.WINDOW_SERVICE);
-
-            float screenWidth = wm.getDefaultDisplay().getWidth();
-            float screenHeight = wm.getDefaultDisplay().getHeight();
-
-            swipeThreshold = (screenHeight>screenWidth)? screenHeight/10: screenWidth/10;
-            DX_THRESHOLD = swipeThreshold/2;
-        }
-
-        public void setTouchDown(float x, float y) {
-            touchDownX = x;
-            touchDownY = y;
-        }
-
-        public boolean isHorizontalSwipe(float x, float y) {
-            float xdiff = touchDownX-x;
-            float ydiff = touchDownY-y;
-            return Math.abs(xdiff) > Math.abs(ydiff) && Math.abs(xdiff) > swipeThreshold;
-        }
-
-        public boolean isVerticalSwipe(float x, float y) {
-            float xdiff = touchDownX-x;
-            float ydiff = touchDownY-y;
-            return Math.abs(xdiff) < Math.abs(ydiff) && Math.abs(ydiff) > swipeThreshold;
-        }
-
-        public boolean isSwipeToRight(float x, float y) {
-            float xdiff = touchDownX-x;
-            float ydiff = touchDownY-y;
-            return xdiff < 0 && Math.abs(xdiff) > Math.abs(ydiff) && Math.abs(xdiff) > swipeThreshold;
-        }
-
-        public boolean isSwipeToLeft(float x, float y) {
-            float xdiff = touchDownX-x;
-            float ydiff = touchDownY-y;
-            return xdiff > 0 && Math.abs(xdiff) > Math.abs(ydiff) && Math.abs(xdiff) > swipeThreshold;
-        }
-
-        public boolean isSwipeToTop(float x, float y) {
-            float xdiff = touchDownX-x;
-            float ydiff = touchDownY-y;
-            return ydiff > 0 && Math.abs(xdiff) < Math.abs(ydiff) && Math.abs(ydiff) > swipeThreshold;
-        }
-
-        public boolean isSwipeToBottom(float x, float y) {
-            float xdiff = touchDownX-x;
-            float ydiff = touchDownY-y;
-            return ydiff < 0 && Math.abs(xdiff) < Math.abs(ydiff) && Math.abs(ydiff) > swipeThreshold;
-        }
-
-        public boolean isInRect(RectF rect) {
-            return rect.contains(touchDownX, touchDownY);
-        }
-    }
 
     public static void centerTextInRect(Canvas canvas, RectF rectF, String text, Paint foreGround, Paint backGround) {
         canvas.drawRect(rectF, backGround);
