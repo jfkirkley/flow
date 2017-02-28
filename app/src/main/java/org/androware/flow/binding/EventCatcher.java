@@ -19,6 +19,7 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -362,8 +363,45 @@ public class EventCatcher {
         }
     }
 
+    public class SeekBarCatcher implements SeekBar.OnSeekBarChangeListener {
+        Pivot pivot;
+
+        int value;
+        int changingProgress;
+        public SeekBarCatcher(SeekBar seekBar, Pivot pivot, BeanBinder beanBinder) {
+            this.pivot = pivot;
+            value = (int) beanBinder.get(pivot.beanField);
+            seekBar.setOnSeekBarChangeListener(this);
+            seekBar.setProgress(value);
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            changingProgress = progress;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            if(changingProgress != value){
+                sendEvent(new WidgetEventInfo(value, changingProgress, pivot));
+                value = changingProgress;
+            }
+
+        }
+    }
+
+
     public void catchDatePicker(DatePicker datePicker, Pivot pivot, BeanBinder beanBinder) {
         new DatePickerCatcher(datePicker, pivot, beanBinder);
+    }
+
+    public void catchSeekBar(SeekBar seekBar, Pivot pivot, BeanBinder beanBinder) {
+        new SeekBarCatcher(seekBar, pivot, beanBinder);
     }
 
     public void catchAdapterView(View baseView, AdapterView adapterView, Pivot pivot, BeanBinder beanBinder) {
@@ -403,13 +441,13 @@ public class EventCatcher {
         if (widget != null) {
             suppressEvents = true;
 
-            if (widget instanceof TextView) {
+            if (widget instanceof CompoundButton) { // note textview is a super class of CompoundButton
+                ((CompoundButton) widget).setChecked((boolean) value);
+            } else if (widget instanceof TextView) {
                 ((TextView) widget).setText((CharSequence) value);
             } else if (widget instanceof DatePicker) {
                 Calendar calendar = (Calendar) value;
                 ((DatePicker) widget).updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-            } else if (widget instanceof CompoundButton) {
-                ((CompoundButton) widget).setChecked((boolean) value);
             } else if (widget instanceof CalendarView) {
                 ((CalendarView) widget).setDate((long) value);
             } else if (widget instanceof RadioGroup) {
@@ -419,6 +457,9 @@ public class EventCatcher {
             } else if (widget instanceof ImageView) {
                 ((ImageView)widget).setImageResource(ResourceUtils.getResId("drawable", (String) value));
                 // setImageView((ImageView) widget, pivot, beanBinder);
+
+            } else if (widget instanceof SeekBar) {
+                ((SeekBar)widget).setProgress((int)value);
             }
 
             suppressEvents = false;
@@ -428,12 +469,13 @@ public class EventCatcher {
 
 
     public void catchWidget(View baseView, View widget, Pivot pivot, BeanBinder beanBinder) {
-        if (widget instanceof TextView) {
+
+        if (widget instanceof CompoundButton) {  // note textview is a super class of CompoundButton
+            catchCompoundButton((CompoundButton) widget, pivot, beanBinder);
+        } else if (widget instanceof TextView) {
             catchTextView(baseView, (TextView) widget, pivot, beanBinder);
         } else if (widget instanceof DatePicker) {
             catchDatePicker((DatePicker) widget, pivot, beanBinder);
-        } else if (widget instanceof CompoundButton) {
-            catchCompoundButton((CompoundButton) widget, pivot, beanBinder);
         } else if (widget instanceof CalendarView) {
             catchCalendarView((CalendarView) widget, pivot, beanBinder);
         } else if (widget instanceof RadioGroup) {
@@ -444,6 +486,8 @@ public class EventCatcher {
             setImageView((ImageView) widget, pivot, beanBinder);
         } else if (widget instanceof TimePicker) {
             catchTimePicker((TimePicker)widget, pivot, beanBinder);
+        } else if (widget instanceof SeekBar) {
+            catchSeekBar((SeekBar) widget, pivot, beanBinder);
         }
     }
 
