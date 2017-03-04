@@ -40,7 +40,7 @@ public class GUI_utils {
 
         Paint resetPaint = null;
 
-        if( text != null) {
+        if( text != null && rectF.width() > 0 ) {
             Rect textBounds = getFontBounds(foreGround, text);
 
             // resize font to make it fit in rectF
