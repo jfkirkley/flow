@@ -36,7 +36,7 @@ import java.util.List;
 public class GUI_utils {
 
     public static void centerTextInRect(Canvas canvas, RectF rectF, String text, Paint foreGround, Paint backGround) {
-        canvas.drawRect(rectF, backGround);
+        canvas.drawRoundRect(rectF, rectF.width()/4, rectF.width()/4, backGround);
 
         Paint resetPaint = null;
 
