@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 
 import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.ResourceUtils;
+import org.androware.flow.BoundStepFragment;
+import org.androware.flow.GUI_utils;
 import org.androware.flow.base.AdapterViewSpec;
 import org.androware.flow.Step;
 
@@ -52,6 +54,9 @@ public class BindingArrayAdapter extends ArrayAdapter {
         BindEngine bindEngine = step.getFlow().getBindEngine();
 
         BeanBinder beanBinder = new BeanBinder(rowDataList.get(position), getItemBinderName(step.getName(), position), Pivot.CURR_ITEM_NAME, bindEngine, step);
+
+
+        l("get boundfrag ancestor: " + step.getStepFragment());
 
         //String matchId = adapterViewSpec.beanIds.get(0);   // TODO hack alert! needs work ...
 

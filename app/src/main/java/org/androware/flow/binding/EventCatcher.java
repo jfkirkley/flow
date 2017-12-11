@@ -27,6 +27,7 @@ import org.androware.androbeans.utils.FilterLog;
 import org.androware.androbeans.utils.MultiListenerUtils;
 import org.androware.androbeans.utils.ReflectionUtils;
 import org.androware.androbeans.utils.ResourceUtils;
+import org.androware.flow.BoundStepFragment;
 import org.androware.flow.GUI_utils;
 //import org.androware.flow.R;
 import org.androware.flow.R;
@@ -149,6 +150,25 @@ public class EventCatcher {
 
     }
 
+    public class CustomViewCatcher  {
+
+        Pivot pivot;
+        Object oldValue;
+
+        public CustomViewCatcher(CustomView customView, Pivot pivot, BeanBinder beanBinder) {
+            this.pivot = pivot;
+            oldValue = (CharSequence) beanBinder.get(pivot.beanField);
+
+            customView.setValue(oldValue);
+
+            BindingArrayAdapter.l(pivot + " oldValue: " + oldValue);
+        }
+    }
+
+    public void catchCustomView(CustomView customView, Pivot pivot, BeanBinder beanBinder) {
+        new CustomViewCatcher(customView, pivot, beanBinder);
+    }
+
 
     public class TextViewCatcher implements TextWatcher {
 
@@ -166,7 +186,10 @@ public class EventCatcher {
             } else {
                 textView.setText(oldValue);
             }
+
             textView.addTextChangedListener(this);
+
+            BindingArrayAdapter.l(pivot + " oldValue: " + oldValue);
         }
 
         @Override
@@ -176,6 +199,8 @@ public class EventCatcher {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String newValue = s.toString();
+            BindingArrayAdapter.l(pivot + " newValue: " + newValue);
+
             if (pivot.isForceUpdate() || !oldValue.equals(newValue)) {
                 sendEvent(new WidgetEventInfo(oldValue, newValue, pivot));
                 oldValue = newValue;
@@ -460,6 +485,10 @@ public class EventCatcher {
 
             } else if (widget instanceof SeekBar) {
                 ((SeekBar)widget).setProgress((int)value);
+
+            } else if (widget instanceof CustomView) {
+                ((CustomView)widget).setValue(value);
+
             }
 
             suppressEvents = false;
@@ -488,6 +517,8 @@ public class EventCatcher {
             catchTimePicker((TimePicker)widget, pivot, beanBinder);
         } else if (widget instanceof SeekBar) {
             catchSeekBar((SeekBar) widget, pivot, beanBinder);
+        } else if (widget instanceof CustomView) {
+            catchCustomView((CustomView)widget, pivot, beanBinder);
         }
     }
 
@@ -524,6 +555,8 @@ public class EventCatcher {
     public void setAll(Step step, View rootView, View fragmentView, boolean allowTemporary) {
         TwoWayMapper twoWayMapper = step.getTwoWayMapper();
 
+        BoundStepFragment boundStepFragment = (BoundStepFragment)step.getStepFragment();
+
         Map<String, Pivot> pivots = twoWayMapper.getPivots();
 
         for (String beanKey : pivots.keySet()) {
@@ -546,7 +579,8 @@ public class EventCatcher {
                 } else {
                     continue;   // global widget already connected
                 }
-            } else {
+
+            } else if(!boundStepFragment.checkSetViewByPivot(pivot, widget)){
                 catchWidget(fragmentView, widget, pivot, beanBinder);
             }
 

@@ -21,6 +21,11 @@ public class JsonObjectSaver implements ObjectSaver {
                 ObjectWriterFactory.getInstance(null).writeJsonObjectToExternalFile((String) objectSaverSpec.properties.get(EXT_FILE_PATH), target);
             } catch (ObjectWriteException e) {
                 // TODO handle exception
+                try {
+                    ObjectWriterFactory.getInstance(null).writeJsonObjectToInternalFile((String) objectSaverSpec.properties.get(EXT_FILE_PATH), target);
+                } catch (ObjectWriteException e1) {
+                    // TODO handle exception
+                }
             }
         }
     }

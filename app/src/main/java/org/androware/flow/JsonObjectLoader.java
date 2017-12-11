@@ -67,6 +67,22 @@ public class JsonObjectLoader implements ObjectLoader {
                 }
             }
 
+            else if ( extFilePath != null &&
+                    Utils.internalFileExists(
+                            ObjectReaderFactory.getInstance().contextWrapper, extFilePath )) {
+
+                try {
+
+                    object = ObjectReaderFactory.getInstance().makeAndRunJsonReader(
+                            new FileInputStream(
+                                    Utils.getInternalFile(ObjectReaderFactory.getInstance().contextWrapper, extFilePath )), objectClass, null);
+
+                } catch (IOException e) {
+                } catch (ObjectReadException e) {
+                    // TODO handle ex
+                }
+            }
+
             else {
                 // just instantiate the object from default constructor
                 object = ReflectionUtils.newInstance(objectClass);

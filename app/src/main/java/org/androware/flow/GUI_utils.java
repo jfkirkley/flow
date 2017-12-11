@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
 
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -140,6 +141,18 @@ public class GUI_utils {
         }
 
         return viewPager;
+    }
+
+    public static View getAncestorViewOfType(View view, Class ancestorType) {
+        ViewParent viewParent = view.getParent();
+        if(viewParent != null ) {
+            if (ancestorType.isAssignableFrom(viewParent.getClass())) {
+                return (View) viewParent;
+            } else if(viewParent instanceof View) {
+                return getAncestorViewOfType((View) viewParent, ancestorType);
+            }
+        }
+        return null;
     }
 
 

@@ -14,8 +14,11 @@ import org.androware.flow.binding.TwoWayMapper;
 
 import java.util.ArrayList;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static android.R.attr.value;
 
@@ -28,12 +31,27 @@ public class BoundStepFragment extends StepFragment {
     List<BeanBinder> binderList;
     boolean needsUpdate = false;
 
+    Map<Pivot, Set<View>> pivot2ViewSetMap;
+
+    public boolean checkSetViewByPivot(Pivot pivot, View view) {
+        Set<View> set = pivot2ViewSetMap.get(pivot);
+        if( set == null) {
+            set = new HashSet<>();
+            pivot2ViewSetMap.put(pivot, set);
+        }
+        if(!set.contains(view)) {
+            set.add(view);
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        pivot2ViewSetMap = new HashMap<>();
+
         final View view = super.onCreateView(inflater, container, savedInstanceState);
-
-
 
         if (binderList == null) {
 
